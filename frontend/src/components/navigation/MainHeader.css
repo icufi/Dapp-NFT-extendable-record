@@ -1,0 +1,17 @@
+.main-header {
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  position: static;
+  top: 0;
+  left: 0;
+  padding: 0 1rem;
+  z-index: 5;
+}
+
+@media (min-width: 768px) {
+  .main-header {
+    justify-content: space-between;
+  }
+}
