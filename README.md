@@ -1,4 +1,4 @@
-# Public Record App
+# Visible App
 
 ## Overview
 
