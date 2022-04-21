@@ -11,9 +11,9 @@ export default function AlertBuilderToken(props) {
     <Stack sx={{ cursor: 'pointer', width: '100%' }} spacing={2}>
       <Alert onClick={() => props.modalControl()} severity='warning'>
         <AlertTitle sx={{ fontWeight: 'bold' }}>
-          You must own at least 1 Builder Token to mint a record.
+          You must own at least 1 Builder Token to mint a Visible record.
         </AlertTitle>
-        Owning a Builder Token NFT grants access to all Public Record services.{' '}
+        Owning a Builder Token NFT grants access to all Visible services.{' '}
         <Button sx={{ ml: theme.spacing(3) }} variant='contained'>
           Get a Builder Token
         </Button>
