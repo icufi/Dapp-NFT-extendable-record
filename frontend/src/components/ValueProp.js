@@ -109,15 +109,6 @@ const ValueProp = (props) => {
             artists get 50% revenue share:{' '}
             <Link
               to='/mode'
-
-              // sx={{
-              //   color: 'blue',
-              //   fontSize: '16px',
-              //   cursor: 'pointer',
-              // }}
-              // component={Link}
-              // to="/mode/specs"
-              // underline='none'
             >
               learn more
             </Link>
