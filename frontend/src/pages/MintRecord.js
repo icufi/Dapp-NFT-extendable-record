@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 const MintRecord = ({ record }) => {
   const auth = useContext(AuthContext);
   const [mrrReceipt, setMrrReceipt] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState('');
   const [tokenOwner, setTokenOwner] = useState(false);
   const [openEmailModal, setOpenEmailModal] = useState(false);
@@ -86,7 +85,6 @@ const MintRecord = ({ record }) => {
   }, [auth.BTTokenCheck, tokenOwner]);
 
   const onSubmitMintRecord = (mode) => async (event) => {
-    setIsLoading(true);
     auth.detect();
     const modeDNA = mode.DNA;
     const modeName = mode.modeName;
@@ -146,11 +144,9 @@ const MintRecord = ({ record }) => {
       .then((response) => {
         console.log(response);
         setMrrReceipt(response);
-        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setIsLoading(false);
         setErr(err);
       });
   };
