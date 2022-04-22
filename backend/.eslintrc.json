@@ -1,13 +1,16 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es2021": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": "latest"
-    },
-    "rules": {
-    }
+  "extends": ["airbnb", "prettier", "eslint:recommended", "plugin:node/recommended"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+      "prettier/prettier": 2,
+      "no-unused-vars": 1,
+      "no-console": 0,
+      "func-names": 0,
+      "no-process-exit": 0,
+      "object-shorthand": 0 
+
+  }
 }
