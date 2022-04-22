@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Web3 from 'web3';
-import { Grid, Button, Box, Container, Alert } from '@mui/material';
+import { Grid, Button, Box, Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import SVG from 'react-inlinesvg';
 
@@ -84,7 +84,7 @@ const MintRecord = ({ record }) => {
     }
   }, [auth.BTTokenCheck, tokenOwner]);
 
-  const onSubmitMintRecord = (mode) => async (event) => {
+  const onSubmitMintRecord = (mode) => async () => {
     auth.detect();
     const modeDNA = mode.DNA;
     const modeName = mode.modeName;
@@ -99,6 +99,7 @@ const MintRecord = ({ record }) => {
 
     // mint record
     sendRequest(
+      // eslint-disable-next-line no-undef
       `${process.env.REACT_APP_BACKEND_URL}/users/mrrQueue`,
       'POST',
       JSON.stringify({ modeDNA, modeName, user: auth.currentAccount }),
@@ -133,6 +134,7 @@ const MintRecord = ({ record }) => {
       .then((trx) => {
         console.log(trx);
         return sendRequest(
+          // eslint-disable-next-line no-undef
           `${process.env.REACT_APP_BACKEND_URL}/users/initMrr`,
           'POST',
           JSON.stringify({ trx }),
