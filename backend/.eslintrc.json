@@ -5,12 +5,15 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-      "prettier/prettier": 2,
+      "prettier/prettier": [
+        "error",
+        {"endOfLine": "auto"}
+      ],
       "no-unused-vars": 1,
       "no-console": 0,
       "func-names": 0,
       "no-process-exit": 0,
-      "object-shorthand": 0 
+      "object-shorthand": 0
 
   }
 }
