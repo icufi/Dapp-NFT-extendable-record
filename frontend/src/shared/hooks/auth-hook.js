@@ -42,6 +42,7 @@ export const useAuth = () => {
   useEffect(() => {
     if (currentAccount) {
       if (chainId === 1) {
+        // eslint-disable-next-line no-undef
         const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
         const alchemy = async () => {
           if (chainId === 1) {
