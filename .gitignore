@@ -4,6 +4,7 @@
 **/node_modules
 /.pnp
 .pnp.js
+**/nodemon.json
 
 # testing
 /coverage
@@ -17,6 +18,10 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
+.env.production
+
+
 
 npm-debug.log*
 yarn-debug.log*
