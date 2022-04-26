@@ -58,10 +58,11 @@ export default function DialogEmailTrx({
 }) {
   const auth = useContext(AuthContext);
   const [open, setOpen] = useState(false);
-  const [scroll, setScroll] = useState('body');
   const [timer, setTimer] = useState(false);
   const [response, setResponse] = useState('');
   const [emailSent, setEmailSent] = useState('');
+
+  const scroll = 'body';
 
   ScrollToTop();
 
@@ -123,7 +124,7 @@ export default function DialogEmailTrx({
         {...props}
         open={props.open}
         onClose={props.onClose}
-        scroll={scroll}
+        scroll='body'
         aria-labelledby='scroll-dialog-title'
         aria-describedby='scroll-dialog-description'
       >
