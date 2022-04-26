@@ -19,6 +19,7 @@
  */
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config();
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -40,30 +41,31 @@ module.exports = {
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
-    // mumbai: {
+
+    mumbai: {
+      provider: () => {
+        return new HDWalletProvider(
+          process.env.SEEDPHRASE,
+          process.env.ALCHEMYMUMBAI
+        );
+      },
+      network_id: 80001, // mumbai test net polygon
+      confirmations: 2,
+      skipDryRun: true,
+    },
+    // Polygon: {
     //   provider: () => {
     //     return new HDWalletProvider(
     //       process.env.SEEDPHRASE,
     //       process.env.ALCHEMYPOLYGON
     //     );
     //   },
-    //   network_id: 80001, // mumbai test net polygon
+    //   network_id: 137, // Polygon Mainnet
+    //   gas: 5500000,
+    //   gasPrice: 40000000000,
     //   confirmations: 2,
     //   skipDryRun: true,
     // },
-    Polygon: {
-      provider: () => {
-        return new HDWalletProvider(
-          process.env.SEEDPHRASE,
-          process.env.ALCHEMYPOLYGON
-        );
-      },
-      network_id: 137, // Polygon Mainnet
-      gas: 5500000,
-      gasPrice: 40000000000,
-      confirmations: 2,
-      skipDryRun: true,
-    },
     // development: {
     //  host: "127.0.0.1",     // Localhost (default: none)
     //  port: 8545,            // Standard Ethereum port (default: none)
