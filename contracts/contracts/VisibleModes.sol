@@ -1387,7 +1387,6 @@ contract ModeMirror is ERC721, Ownable {
     address public authMinter1;
     address public authMinter2;
     address public authMinter3;
-    uint256 public cost;
 
     struct Mirror {
         string name;
@@ -1434,7 +1433,6 @@ contract ModeMirror is ERC721, Ownable {
         address _attrCreatorAddr,
         bytes32 _DNA
     ) public payable secureMinter {
-        require(msg.value >= cost);
         Mirror memory newMirror = Mirror(
             _name,
             _description,
@@ -1555,10 +1553,6 @@ contract ModeMirror is ERC721, Ownable {
 
     function setSafeCheckAddr(address _safeCheckAddr) public onlyOwner {
         safeCheckaddr = _safeCheckAddr;
-    }
-
-    function setCost(uint256 _cost) public onlyOwner {
-        cost = _cost;
     }
 
     function setAuthMinter(
