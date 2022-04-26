@@ -91,7 +91,7 @@ const mrrQueue = async (req, res, next) => {
   }
 
   // get record as object
-  console.log(dbRecord)
+  console.log(dbRecord);
   record = dbRecord[0];
 
   // svg image owner variable set to user that has been confirmed against BAYC contract
