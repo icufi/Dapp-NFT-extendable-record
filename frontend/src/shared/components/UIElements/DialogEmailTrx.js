@@ -81,7 +81,7 @@ export default function DialogEmailTrx({
     }
   }, [open]);
 
-  const { sendRequest, isLoading, error, clearError } = useHttpClient();
+  const { sendRequest, isLoading, error } = useHttpClient();
 
   const onSubmitHandler = async (event) => {
     auth.detect();
@@ -127,7 +127,7 @@ export default function DialogEmailTrx({
         aria-labelledby='scroll-dialog-title'
         aria-describedby='scroll-dialog-description'
       >
-        <Box sx={{width: '500px'}}>
+        <Box sx={{ width: '500px' }}>
           <DialogTitle xs={6} id='scroll-dialog-title'>
             Your mint is pending...
           </DialogTitle>
@@ -176,136 +176,152 @@ export default function DialogEmailTrx({
               textAlign='center'
             >
               <LoadingSpinner />
-              <Typography sx={{mt: theme.spacing(3), padding: theme.spacing(2)}}>We recommend using 'aggressive' gas fees in Metamask and keeping this dialog box open until you receive a 'success' message.</Typography>
+              <Typography
+                sx={{ mt: theme.spacing(3), padding: theme.spacing(2) }}
+              >
+                We recommend using 'aggressive' gas fees in Metamask and keeping
+                this dialog box open until you receive a 'success' message.
+              </Typography>
             </Box>
           )}
           <DialogActions>
             <Button onClick={props.onClose}>Close</Button>
           </DialogActions>
-          {/* <DialogContent dividers={scroll === 'paper'}>
-          {!err && !receipt && !response && (
-            <DialogContentText
-              id='scroll-dialog-description'
-              ref={descriptionElementRef}
-              tabIndex={-1}
-              sx={{ mb: theme.spacing(4) }}
+          <DialogContent dividers={scroll === 'paper'}>
+            {!err && !receipt && !response && (
+              <DialogContentText
+                id='scroll-dialog-description'
+                ref={descriptionElementRef}
+                tabIndex={-1}
+                sx={{ mb: theme.spacing(4) }}
+              >
+                Send an email from{' '}
+                {record.attrNFTName.substring(
+                  0,
+                  record.attrNFTName.length - 13
+                )}{' '}
+                while you wait.
+              </DialogContentText>
+            )}
+            {receipt && !response && (
+              <DialogContentText
+                id='scroll-dialog-description'
+                ref={descriptionElementRef}
+                tabIndex={-1}
+                sx={{ mb: theme.spacing(4) }}
+              >
+                Send an email from{' '}
+                {record.attrNFTName.substring(
+                  0,
+                  record.attrNFTName.length - 13
+                )}{' '}
+                now.
+              </DialogContentText>
+            )}
+            <Formik
+              initialValues={{ ...INITIAL_FORM_STATE }}
+              validationSchema={FORM_VALIDATION_SCHEMA}
+              onSubmit={onSubmitHandler}
             >
-              Send an email from{' '}
-              {record.attrNFTName.substring(0, record.attrNFTName.length - 13)}{' '}
-              while you wait.
-            </DialogContentText>
-          )}
-          {receipt && !response && (
-            <DialogContentText
-              id='scroll-dialog-description'
-              ref={descriptionElementRef}
-              tabIndex={-1}
-              sx={{ mb: theme.spacing(4) }}
-            >
-              Send an email from{' '}
-              {record.attrNFTName.substring(0, record.attrNFTName.length - 13)}{' '}
-              now.
-            </DialogContentText>
-          )}
-          <Formik
-            initialValues={{ ...INITIAL_FORM_STATE }}
-            validationSchema={FORM_VALIDATION_SCHEMA}
-            onSubmit={onSubmitHandler}
-          >
-            <Form>
-              <Grid container spacing={2}>
-                {!response && !error && (
-                  <React.Fragment>
-                    <Grid item xs={6}>
-                      <Box sx={{ fontSize: '12px' }}>email address from</Box>
-                      <TextFieldFormik
-                        name='emailFrom'
-                        label={`ex:  ${record.nftTokenType}${record.nftTokenId}`}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{ color: '#808080', pt: '43px', fontSize: {xs: "16px", md: "34px"}, }}
-                      >
-                        @publicrecord.cc
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box sx={{ fontSize: '12px' }}>email address to</Box>
-                      <TextFieldFormik name='emailTo' label={`recipient`} />
-                    </Grid>
+              <Form>
+                <Grid container spacing={2}>
+                  {!response && !error && (
+                    <React.Fragment>
+                      <Grid item xs={6}>
+                        <Box sx={{ fontSize: '12px' }}>email address from</Box>
+                        <TextFieldFormik
+                          name='emailFrom'
+                          label={`ex:  ${record.nftTokenType}${record.nftTokenId}`}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Box
+                          sx={{
+                            color: '#808080',
+                            pt: '43px',
+                            fontSize: { xs: '16px', md: '34px' },
+                          }}
+                        >
+                          @publicrecord.cc
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Box sx={{ fontSize: '12px' }}>email address to</Box>
+                        <TextFieldFormik name='emailTo' label={`recipient`} />
+                      </Grid>
 
-                    {/* <Grid item xs={12}>
-                      <Box sx={{ fontSize: '12px' }}>email address reply</Box>
-                      <TextFieldFormik
-                        name='emailReply'
-                        label='Your real email address (optional)'
-                      />
-                    </Grid> */}
+                      <Grid item xs={12}>
+                        <Box sx={{ fontSize: '12px' }}>email address reply</Box>
+                        <TextFieldFormik
+                          name='emailReply'
+                          label='Your real email address (optional)'
+                        />
+                      </Grid>
 
-          {/* <Grid item xs={12}>
-                      <TextFieldFormik
-                        name='subject'
-                        label='Subject (optional)'
-                      />
-                    </Grid> */}
-          {/*
-                    <Grid item xs={12}>
-                      <TextFieldFormik
-                        name='message'
-                        label='Message (optional)'
-                        multiline={true}
-                        rows={8}
-                      />
-                    </Grid> */}
-          {/* </React.Fragment>
-                )}
-                {isLoading && (
-                  <Grid>
-                    <LoadingSpinner />
-                  </Grid>
-                )}
-                {response && (
-                  <Grid sx={{ width: '600px' }} item>
-                    <Typography>{response.msg}</Typography>
-                  </Grid>
-                )}
-              </Grid> */}
-          {/* {!err && (
-                <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      color: 'blue', fontSize: '16px'
-                    }}
-                  >
-                    {record.nftTokenType} {record.nftTokenId}'s new public
-                    record will be included in the email body.
-                  </Box>
+                      <Grid item xs={12}>
+                        <TextFieldFormik
+                          name='subject'
+                          label='Subject (optional)'
+                        />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <TextFieldFormik
+                          name='message'
+                          label='Message (optional)'
+                          multiline={true}
+                          rows={8}
+                        />
+                      </Grid>
+                    </React.Fragment>
+                  )}
+                  {isLoading && (
+                    <Grid>
+                      <LoadingSpinner />
+                    </Grid>
+                  )}
+                  {response && (
+                    <Grid sx={{ width: '600px' }} item>
+                      <Typography>{response.msg}</Typography>
+                    </Grid>
+                  )}
                 </Grid>
-              )}
-              <DialogActions>
-                {!response && !err && (
-                  <React.Fragment>
-                    <Button onClick={props.onClose}>Close</Button>
-                    <ButtonFormik
-                      err={err ? true : false}
-                      email
-                      onClick={onSubmitHandler}
-                      response={response ? true : false}
-                      emailSent={emailSent ? true : false}
+                {!err && (
+                  <Grid item xs={12}>
+                    <Box
+                      sx={{
+                        color: 'blue',
+                        fontSize: '16px',
+                      }}
                     >
-                      Send
-                    </ButtonFormik>
-                  </React.Fragment>
+                      {record.nftTokenType} {record.nftTokenId}'s new public
+                      record will be included in the email body.
+                    </Box>
+                  </Grid>
                 )}
-                {response && <Button onClick={props.onClose}>Close</Button>}
-                {err && !response && (
-                  <Button onClick={props.onClose}>Close</Button>
-                )}
-              </DialogActions>
-            </Form>
-          </Formik> */}
-          {/* </DialogContent> */}
+                <DialogActions>
+                  {!response && !err && (
+                    <React.Fragment>
+                      <Button onClick={props.onClose}>Close</Button>
+                      <ButtonFormik
+                        err={err ? true : false}
+                        email
+                        onClick={onSubmitHandler}
+                        response={response ? true : false}
+                        emailSent={emailSent ? true : false}
+                      >
+                        Send
+                      </ButtonFormik>
+                    </React.Fragment>
+                  )}
+                  {response && <Button onClick={props.onClose}>Close</Button>}
+                  {err && !response && (
+                    <Button onClick={props.onClose}>Close</Button>
+                  )}
+                </DialogActions>
+              </Form>
+            </Formik>
+          </DialogContent>
         </Box>
       </Dialog>
     </div>
