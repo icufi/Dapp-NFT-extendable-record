@@ -42,8 +42,6 @@ const ValueProp = (props) => {
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
-  console.log('error:', error);
-
   const onSubmitHandler = async (event) => {
     auth.detect();
     try {
@@ -52,7 +50,11 @@ const ValueProp = (props) => {
         `${process.env.REACT_APP_BACKEND_URL}/users/initRecord`,
         'POST',
         JSON.stringify({
-          user: auth.provider.selectedAddress,
+          // todo delete test user below and uncomment selectedAddress for production
+          user: '0x46EFbAedc92067E6d60E84ED6395099723252496',
+
+          // user: auth.provider.selectedAddress,
+
           nftTokenType: event.nftTokenType,
           nftTokenId: event.nftTokenId,
           message: event.message,
