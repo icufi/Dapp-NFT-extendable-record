@@ -40,55 +40,11 @@ const FORM_VALIDATION_SCHEMA = Yup.object().shape({
   tokenCount: Yup.number().required('Minimum token purchase is 1.'),
 });
 
-function ChildModal(props) {
-  return (
-    <React.Fragment>
-      <Modal
-        hideBackdrop
-        {...props}
-        aria-labelledby='child-modal-title'
-        aria-describedby='child-modal-description'
-      >
-        <Box sx={{ ...style, width: 400 }}>
-          <h2 id='child-modal-title'>Why Polygon?</h2>
-          <p id='child-modal-description'></p>
-          <ul>
-            <li>Polygon is a popular Ethereum Layer2 solution.</li>
-            <li>Polygon operates exactly like Ethereum.</li>
-            <li>Gas fees are pennies per transaction.</li>
-            <li>Low gas fees means we can build more useful services.</li>
-            <li>Polygon NFTs are traded on Opensea and elsewhere.</li>
-          </ul>
-
-          <Box textAlign='center'>
-            <Button variant='contained' onClick={props.onClose}>
-              Close
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
-    </React.Fragment>
-  );
-}
-
 export default function NestedModal({ owner, ...props }) {
   const auth = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
   const [trxSuccess, setTrxSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const chainIdHandler = () => {
-    auth.detect();
-  };
 
   const onSubmitHandler = async (event) => {
     setIsLoading(true);
@@ -192,7 +148,6 @@ export default function NestedModal({ owner, ...props }) {
                     </Typography>
                   </Grid>
                 )}
-                {/* todo switch chain id to 137 polygon mainnet */}
                 {auth.chainId !== 137 && (
                   <Grid
                     xs={12}
@@ -252,7 +207,6 @@ export default function NestedModal({ owner, ...props }) {
               </Grid>
             </Form>
           </Formik>
-          <ChildModal open={open} onClose={handleClose} />
           <Box
             display='flex'
             justifyContent='flex-end'
