@@ -88,7 +88,8 @@ export const useAuth = () => {
 
   useEffect(() => {
     if (currentAccount) {
-      if (chainId === 137) {
+      // todo switch to 137
+      if (chainId === 80001) {
         const initBTTokenCheckPolygon = async () => {
           const provider = await detectProvider();
           const web3 = new Web3(provider);

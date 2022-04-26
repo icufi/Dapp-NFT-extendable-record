@@ -55,7 +55,6 @@ export default function NestedModal({ owner, ...props }) {
       BuilderTokensBuild.networks[networkId].address
     );
 
-
     const value = event.tokenCount * 60;
     const payment = web3.utils.toWei(value.toString(), 'ether');
 
@@ -66,7 +65,7 @@ export default function NestedModal({ owner, ...props }) {
           from: auth.provider.selectedAddress,
           value: payment,
         })
-        .then(function (receipt) {
+        .then(function(receipt) {
           setIsLoading(false);
           setTrxSuccess(true);
           owner(true);
@@ -88,7 +87,9 @@ export default function NestedModal({ owner, ...props }) {
         aria-describedby='parent-modal-description'
       >
         <Box sx={{ ...style, width: 600 }}>
-          <h2 id='parent-modal-title'>Visible builds services for NFT owners</h2>
+          <h2 id='parent-modal-title'>
+            Visible builds services for NFT owners
+          </h2>
           <p id='parent-modal-description'>
             Owning a Builder Token NFT grants:
           </p>
@@ -119,7 +120,7 @@ export default function NestedModal({ owner, ...props }) {
                 <Grid xs={3} item>
                   {/* todo switch disable check to id 137 main polygon */}
                   <ButtonModalBTBuy
-                    disabled={auth.chainId === 137 ? false : true}
+                    disabled={auth.chainId === 80001 ? false : true}
                     sx={{ mt: theme.spacing(2) }}
                   >
                     Submit
@@ -148,7 +149,10 @@ export default function NestedModal({ owner, ...props }) {
                     </Typography>
                   </Grid>
                 )}
-                {auth.chainId !== 137 && (
+                {
+                  // todo switch to 137 Mainnet
+                }
+                {auth.chainId !== 80001 && (
                   <Grid
                     xs={12}
                     sx={{
@@ -161,7 +165,6 @@ export default function NestedModal({ owner, ...props }) {
                       transaction.
                     </Typography>
                     <Box
-
                       sx={{
                         fontSize: '14px',
                         cursor: 'pointer',
@@ -217,7 +220,6 @@ export default function NestedModal({ owner, ...props }) {
               sx={{
                 cursor: 'pointer',
               }}
-
             >
               Close
             </Button>

@@ -37,15 +37,15 @@ const FORM_VALIDATION_SCHEMA = Yup.object().shape({
     .email('Email format is not valid.')
     .required('A mail to address is required.'),
 
-  // emailReply: Yup.string().email('Email format is not valid.'),
+  emailReply: Yup.string().email('Email format is not valid.'),
   subject: Yup.string().max(
     100,
     'Please keep subject line to less than 100 characters.'
   ),
-  // message: Yup.string().max(
-  //   1000,
-  //   'Please keep your message to less than 1000 characters.'
-  // ),
+  message: Yup.string().max(
+    1000,
+    'Please keep your message to less than 1000 characters.'
+  ),
 });
 
 export default function DialogEmailTrx({
@@ -57,10 +57,10 @@ export default function DialogEmailTrx({
   ...props
 }) {
   const auth = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
   const [timer, setTimer] = useState(false);
   const [response, setResponse] = useState('');
   const [emailSent, setEmailSent] = useState('');
+  const [open, setOpen] = useState(false)
 
   const scroll = 'body';
 
