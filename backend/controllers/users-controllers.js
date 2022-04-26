@@ -1,30 +1,30 @@
-const { validationResult } = require("express-validator");
-const axios = require("axios");
-const pinataSDK = require("@pinata/sdk");
-const fs = require("fs");
-const Web3 = require("web3");
-const HDWalletProvider = require("@truffle/hdwallet-provider");
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const { validationResult } = require('express-validator');
+const axios = require('axios');
+const pinataSDK = require('@pinata/sdk');
+const fs = require('fs');
+const Web3 = require('web3');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
 
-const HttpError = require("../models/http-error");
-const Email = require("../models/email");
-const Suggestion = require("../models/suggestion");
-const Record = require("../models/record");
-const wordWrap = require("../util/wordWrap");
-const { mintInterval } = require("../events/mintInterval");
-const { emailInterval } = require("../events/emailInterval");
+const HttpError = require('../models/http-error');
+const Email = require('../models/email');
+const Suggestion = require('../models/suggestion');
+const Record = require('../models/record');
+const wordWrap = require('../util/wordWrap');
+const { mintInterval } = require('../events/mintInterval');
+const { emailInterval } = require('../events/emailInterval');
 
 // PUBCONTRACTS
-const PublicRecordBuild = require("../assets/contracts/VisibleRecords.json");
-const PublicMirrorBuild = require("../assets/contracts/TokenMirror.json");
+const PublicRecordBuild = require('../assets/contracts/VisibleRecords.json');
+const PublicMirrorBuild = require('../assets/contracts/TokenMirror.json');
 
 // BAYC CONTRACT AND TEMPLATES
-const BAYCContract = require("../assets/contracts/PRABI/BAYC.json");
-const BAYCMaster = require("../assets/templates/BAYC/BAYCMaster");
+const BAYCContract = require('../assets/contracts/PRABI/BAYC.json');
+const BAYCMaster = require('../assets/templates/BAYC/BAYCMaster');
 
 // TEST TEMPLATE AND CONTRACT
-const TESTMaster = require("../assets/templates/TestTokens/TESTMaster");
-const TESTContract = require("../assets/contracts/PRABI/TestTokens.json");
+const TESTMaster = require('../assets/templates/TestTokens/TESTMaster');
+const TESTContract = require('../assets/contracts/PRABI/TestTokens.json');
 
 // PROVIDER variables
 const mnemonic = process.env.MNEMONIC_ADMIN;
@@ -47,8 +47,8 @@ const mrrQueue = async (req, res, next) => {
   const pinata = pinataSDK(process.env.USER, process.env.API_KEY);
 
   // get dna from req.body to call db record
-  const modeDNA = req.body.modeDNA;
-  let modeName = req.body.modeName;
+  const { modeDNA } = req.body;
+  let { modeName } = req.body;
   let dbRecord;
   let record;
   let svg;
@@ -78,19 +78,20 @@ const mrrQueue = async (req, res, next) => {
     dbRecord = await Record.find({ modeDNA: modeDNA });
   } catch (err) {
     const error = new HttpError(
-      "Could not retrieve record in our database.",
+      'Could not retrieve record in our database.',
       503
     );
     return next(error);
   }
 
   // if non or more than one record in returned array then error
-  if (!dbRecord || dbRecord.length != 1) {
-    const error = new HttpError("Record is not unique or does not exist.");
+  if (!dbRecord || dbRecord.length !== 1) {
+    const error = new HttpError('Record is not unique or does not exist.');
     return next(error);
   }
 
   // get record as object
+  console.log(dbRecord)
   record = dbRecord[0];
 
   // svg image owner variable set to user that has been confirmed against BAYC contract
@@ -101,7 +102,7 @@ const mrrQueue = async (req, res, next) => {
   // ownership check
   if (ownerAddr !== user || recordUser !== user) {
     const error = new HttpError(
-      "User does not match our records or NFT ownership records.",
+      'User does not match our records or NFT ownership records.',
       403
     );
     return next(error);
@@ -122,24 +123,24 @@ const mrrQueue = async (req, res, next) => {
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   // BAYC
-  if (record.nftTokenType === "BAYC") {
+  if (record.nftTokenType === 'BAYC') {
     try {
       responseImage = await axios.get(
         `https://infura-ipfs.io/ipfs/${record.NFTCID}`,
         {
-          responseType: "arraybuffer",
+          responseType: 'arraybuffer',
         }
       );
     } catch (err) {
       const error = new HttpError(
-        "Network error. Failed to retrieve your NFT image from the network.",
+        'Network error. Failed to retrieve your NFT image from the network.',
         424
       );
       return next(error);
     }
 
     // convert response image to Base64
-    returnedB64 = Buffer.from(responseImage.data).toString("base64");
+    returnedB64 = Buffer.from(responseImage.data).toString('base64');
 
     // format image variable with Base64 image for svg insertion
     image = `<image
@@ -163,7 +164,7 @@ const mrrQueue = async (req, res, next) => {
     nftTokenId = record.nftTokenId;
 
     // svg image keyword formatted
-    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : "";
+    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : '';
 
     // record creation date
     creationDate = record.prCreateDate;
@@ -172,19 +173,19 @@ const mrrQueue = async (req, res, next) => {
     requestedMode = BAYCMaster.filter((mode) => modeName === mode.name);
     requestedMode = requestedMode[0];
 
-    console.log("requested mode:", requestedMode);
+    console.log('requested mode:', requestedMode);
 
     // find the index of the requested mode in the baycmaster array
     modeIndex = BAYCMaster.findIndex((modes) => requestedMode === modes);
-    console.log("modeIndex:", modeIndex);
+    console.log('modeIndex:', modeIndex);
 
     // create svg image using mode requested by user
     svg = requestedMode(
       image,
-      textOne ? textOne : "",
-      textTwo ? textTwo : "",
-      textThree ? textThree : "",
-      textFour ? textFour : "",
+      textOne ? textOne : '',
+      textTwo ? textTwo : '',
+      textThree ? textThree : '',
+      textFour ? textFour : '',
       ownerAddr,
       nftTokenId,
       timeStampImage,
@@ -193,24 +194,24 @@ const mrrQueue = async (req, res, next) => {
   }
 
   // TEST
-  if (record.nftTokenType === "TEST") {
+  if (record.nftTokenType === 'TEST') {
     try {
       responseImage = await axios.get(
         `https://infura-ipfs.io/ipfs/${record.NFTCID}`,
         {
-          responseType: "arraybuffer",
+          responseType: 'arraybuffer',
         }
       );
     } catch (err) {
       const error = new HttpError(
-        "Network error. Failed to retrieve your NFT image from the network.",
+        'Network error. Failed to retrieve your NFT image from the network.',
         424
       );
       return next(error);
     }
 
     // convert response image to Base64
-    returnedB64 = Buffer.from(responseImage.data).toString("base64");
+    returnedB64 = Buffer.from(responseImage.data).toString('base64');
 
     // format image variable with Base64 image for svg insertion
     image = `<image
@@ -234,7 +235,7 @@ const mrrQueue = async (req, res, next) => {
     nftTokenId = record.nftTokenId;
 
     // svg image keyword formatted
-    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : "";
+    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : '';
 
     // record creation date
     creationDate = record.prCreateDate;
@@ -243,19 +244,19 @@ const mrrQueue = async (req, res, next) => {
     requestedMode = TESTMaster.filter((mode) => modeName === mode.name);
     requestedMode = requestedMode[0];
 
-    console.log("requested mode:", requestedMode);
+    console.log('requested mode:', requestedMode);
 
     // find the index of the requested mode in the baycmaster array
     modeIndex = TESTMaster.findIndex((modes) => requestedMode === modes);
-    console.log("modeIndex:", modeIndex);
+    console.log('modeIndex:', modeIndex);
 
     // create svg image using mode requested by user
     svg = requestedMode(
       image,
-      textOne ? textOne : "",
-      textTwo ? textTwo : "",
-      textThree ? textThree : "",
-      textFour ? textFour : "",
+      textOne ? textOne : '',
+      textTwo ? textTwo : '',
+      textThree ? textThree : '',
+      textFour ? textFour : '',
       ownerAddr,
       nftTokenId,
       timeStampImage,
@@ -279,23 +280,23 @@ const mrrQueue = async (req, res, next) => {
 
   // get dna of image plus metadata to compare with dna created at init
   confirmDNA = await Web3.utils.soliditySha3(
-    { t: "string", v: record.name },
-    { t: "string", v: record.description },
-    { t: "string", v: svg },
-    { t: "string", v: record.message },
-    { t: "string", v: record.prCreateDate },
-    { t: "string", v: record.attrNFTName },
-    { t: "string", v: record.attrKeyword }
+    { t: 'string', v: record.name },
+    { t: 'string', v: record.description },
+    { t: 'string', v: svg },
+    { t: 'string', v: record.message },
+    { t: 'string', v: record.prCreateDate },
+    { t: 'string', v: record.attrNFTName },
+    { t: 'string', v: record.attrKeyword }
   );
 
-  console.log("confirm DNA:", confirmDNA);
+  console.log('confirm DNA:', confirmDNA);
   // find dna by index in modeDNA array
   const DNAIndex = record.modeDNA.findIndex((DNA) => confirmDNA === DNA);
-  console.log("dna index:", DNAIndex);
+  console.log('dna index:', DNAIndex);
 
   // if dna index does not match mode index, error
   if (DNAIndex !== modeIndex || DNAIndex === -1 || modeIndex === -1) {
-    const error = new HttpError("Image failed quality control checks.", 503);
+    const error = new HttpError('Image failed quality control checks.', 503);
     return next(error);
   }
 
@@ -327,13 +328,13 @@ const mrrQueue = async (req, res, next) => {
     });
 
     // confirm image hashing and pinning succesful
-    if ("Qm" !== pinnedImgHsh.substring(0, 2)) {
-      const error = new HttpError("Image failed to pin to ipfs.", 503);
+    if ('Qm' !== pinnedImgHsh.substring(0, 2)) {
+      const error = new HttpError('Image failed to pin to ipfs.', 503);
       return next(error);
     }
   } catch (err) {
     const error = new HttpError(
-      "Network error. Failed uploading image of record to ipfs.",
+      'Network error. Failed uploading image of record to ipfs.',
       424
     );
     return next(error);
@@ -342,16 +343,16 @@ const mrrQueue = async (req, res, next) => {
   // generate record dna at contract
   try {
     contractDNA = await Web3.utils.soliditySha3(
-      { t: "string", v: record.name },
-      { t: "string", v: record.description },
-      { t: "string", v: "ipfs://" + pinnedImgHsh },
-      { t: "string", v: record.message },
-      { t: "string", v: record.prCreateDate },
-      { t: "string", v: record.attrNFTName },
-      { t: "string", v: record.attrKeyword }
+      { t: 'string', v: record.name },
+      { t: 'string', v: record.description },
+      { t: 'string', v: 'ipfs://' + pinnedImgHsh },
+      { t: 'string', v: record.message },
+      { t: 'string', v: record.prCreateDate },
+      { t: 'string', v: record.attrNFTName },
+      { t: 'string', v: record.attrKeyword }
     );
   } catch (err) {
-    const error = new HttpError("Failed to generate contract record DNA.", 503);
+    const error = new HttpError('Failed to generate contract record DNA.', 503);
     return next(error);
   }
 
@@ -360,12 +361,12 @@ const mrrQueue = async (req, res, next) => {
     const artist = _modeName.substring(_modeName.length - 9);
     const tokenType = _modeName.substring(0, 4);
     const modeKeyword = _modeName.substring(4, _modeName.length - 9);
-    return artist.concat("-", tokenType, "-", modeKeyword);
+    return artist.concat('-', tokenType, '-', modeKeyword);
   };
 
   // format modeName
   modeName = modeNameFormat(modeName);
-  console.log("mode name formatted:", modeName);
+  console.log('mode name formatted:', modeName);
 
   try {
     record.image = pinnedImgHsh;
@@ -377,7 +378,7 @@ const mrrQueue = async (req, res, next) => {
     await record.save();
   } catch (err) {
     const error = new HttpError(
-      "Database failed to updated to pending status.",
+      'Database failed to updated to pending status.',
       503
     );
     return next(error);
@@ -403,7 +404,7 @@ const mrrQueue = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError(
-      "Network failure. Response object not returned to client.",
+      'Network failure. Response object not returned to client.',
       424
     );
     return next(error);
@@ -429,7 +430,7 @@ const initMrr = async (req, res, next) => {
       PublicRecordBuild.networks[networkIdPolygon].address
     );
   } catch (err) {
-    throw new Error("Failed to connect to PubContract at Polygon Alchemy.");
+    throw new Error('Failed to connect to PubContract at Polygon Alchemy.');
   }
 
   // mirror contract polygon
@@ -444,7 +445,7 @@ const initMrr = async (req, res, next) => {
 
   // if client transaction fails, return
   if (!status || status == false) {
-    const error = new HttpError("Minting failed.", 424);
+    const error = new HttpError('Minting failed.', 424);
     return next(error);
   }
 
@@ -457,13 +458,13 @@ const initMrr = async (req, res, next) => {
       .DNA(notConfirmedPubTokenId)
       .call({ from: accountsPolygon[0] });
   } catch (err) {
-    const error = new HttpError("Network error. PubContract DNA failed.", 424);
+    const error = new HttpError('Network error. PubContract DNA failed.', 424);
     return next(error);
   }
 
   // if PrToken dna does not exist, return
   if (!pubContractDNA || pubContractDNA == 0) {
-    const error = new HttpError("Token DNA does not exist.", 403);
+    const error = new HttpError('Token DNA does not exist.', 403);
     return next(error);
   }
 
@@ -476,7 +477,7 @@ const initMrr = async (req, res, next) => {
     confirmedPubTokenCreator = confirmedPubTokenCreator.toLowerCase(); // lower case address
   } catch (err) {
     const error = new HttpError(
-      "Network error. Failed to call Pub contract.",
+      'Network error. Failed to call Pub contract.',
       424
     );
     return next(error);
@@ -484,7 +485,7 @@ const initMrr = async (req, res, next) => {
 
   // if confirmed pubTokenCreator does not exist, return
   if (!confirmedPubTokenCreator || confirmedPubTokenCreator == 0) {
-    const error = new HttpError("Pub token does not exist.", 403);
+    const error = new HttpError('Pub token does not exist.', 403);
     return next(error);
   }
 
@@ -493,14 +494,14 @@ const initMrr = async (req, res, next) => {
   try {
     dbRecord = await Record.find({ dna: pubContractDNA });
 
-    console.log("pubContractDNA:", pubContractDNA);
+    console.log('pubContractDNA:', pubContractDNA);
 
     if (!dbRecord || dbRecord.length != 1) {
-      throw new Error("Record is not unique or does not exist!");
+      throw new Error('Record is not unique or does not exist!');
     }
     dbRecord = dbRecord[0];
   } catch (err) {
-    const error = new HttpError("Failed to find a unique record!", 503);
+    const error = new HttpError('Failed to find a unique record!', 503);
     return next(error);
   }
 
@@ -513,7 +514,7 @@ const initMrr = async (req, res, next) => {
     notConfirmedTrxCreator != dbRecord.user
   ) {
     const error = new HttpError(
-      "Transaction token creator does not match our records.",
+      'Transaction token creator does not match our records.',
       403
     );
     return next(error);
@@ -526,11 +527,11 @@ const initMrr = async (req, res, next) => {
     dbRecord.mrrMintWhere
   ) {
     try {
-      dbRecord.mintingError = "Suspected double mint attempt at initMrr.";
+      dbRecord.mintingError = 'Suspected double mint attempt at initMrr.';
       await dbRecord.save();
     } catch (err) {
       const error = new HttpError(
-        "Failed to update db with possible double mint attempt.",
+        'Failed to update db with possible double mint attempt.',
         500
       );
       return next(error);
@@ -540,11 +541,11 @@ const initMrr = async (req, res, next) => {
   // check for timeout set by mintInterval
   if (dbRecord.mrrTimeout === true) {
     try {
-      dbRecord.mintingError = "Timeout at initMrr.";
+      dbRecord.mintingError = 'Timeout at initMrr.';
       await dbRecord.save();
     } catch (err) {
       const error = new HttpError(
-        "Failed to update db with minting error. Timeout at initMrr.",
+        'Failed to update db with minting error. Timeout at initMrr.',
         500
       );
       return next(error);
@@ -567,9 +568,9 @@ const initMrr = async (req, res, next) => {
   //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   // BAYC
-  if (dbRecord.nftTokenType === "BAYC") {
+  if (dbRecord.nftTokenType === 'BAYC') {
     // BAYC web3 init Ethereum
-    const baycAddr = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D";
+    const baycAddr = '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D';
     let web3Eth;
     let accountsEth;
     let networkIdEth;
@@ -581,7 +582,7 @@ const initMrr = async (req, res, next) => {
       networkIdEth = await web3Eth.eth.net.getId();
       baycContract = new web3Eth.eth.Contract(BAYCContract, baycAddr);
     } catch (err) {
-      throw new Error("Failed to connect to BAYC contract at alchem Eth.", err);
+      throw new Error('Failed to connect to BAYC contract at alchem Eth.', err);
     }
 
     // get bayc owner from network based on token provided and previously checked at generation
@@ -591,15 +592,15 @@ const initMrr = async (req, res, next) => {
         .call();
       confirmedNFTTokenOwner = BaycTokenOwner.toLowerCase();
     } catch (err) {
-      const error = new HttpError("Ethereum token owner call failed.", 500);
+      const error = new HttpError('Ethereum token owner call failed.', 500);
       return next(error);
     }
   }
 
   // TEST
-  if (dbRecord.nftTokenType === "TEST") {
+  if (dbRecord.nftTokenType === 'TEST') {
     // BAYC web3 init Ethereum
-    const testAddr = "0x52EA23F2fef28005bEf1DA54e971517C5863a1ad";
+    const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
     let web3Polygon;
     let accountsEth;
     let networkIdEth;
@@ -611,7 +612,7 @@ const initMrr = async (req, res, next) => {
       networkIdPolygon = await web3Polygon.eth.net.getId();
       testContract = new web3Polygon.eth.Contract(TESTContract.abi, testAddr);
     } catch (err) {
-      throw new Error("Failed to connect to Test Token contract.", err);
+      throw new Error('Failed to connect to Test Token contract.', err);
     }
 
     // get bayc owner from network based on token provided and previously checked at generation
@@ -621,7 +622,7 @@ const initMrr = async (req, res, next) => {
         .call();
       confirmedNFTTokenOwner = TestTokenOwner.toLowerCase();
     } catch (err) {
-      const error = new HttpError("Ethereum token owner call failed.", 500);
+      const error = new HttpError('Ethereum token owner call failed.', 500);
       return next(error);
     }
   }
@@ -642,7 +643,7 @@ const initMrr = async (req, res, next) => {
   // if confirmed nft token owner doesn't exist, return
   if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
     const error = new HttpError(
-      "Unable to confirm NFT token ownership. Network error.",
+      'Unable to confirm NFT token ownership. Network error.',
       403
     );
     return next(error);
@@ -652,17 +653,17 @@ const initMrr = async (req, res, next) => {
   if (confirmedNFTTokenOwner != notConfirmedTrxCreator) {
     try {
       dbRecord.mintingError =
-        "NFT token owner does not equal transaction creator.";
+        'NFT token owner does not equal transaction creator.';
       dbRecord.pending = false;
       await dbRecord.save();
       const error = new HttpError(
-        "NFT token owner and trasaction creator are not the same person.",
+        'NFT token owner and trasaction creator are not the same person.',
         403
       );
       return next(error);
     } catch (err) {
       const error = new HttpError(
-        "Database failed to update NFT token owner does not equal transaction creator.",
+        'Database failed to update NFT token owner does not equal transaction creator.',
         500
       );
       return next(error);
@@ -673,17 +674,17 @@ const initMrr = async (req, res, next) => {
   if (confirmedNFTTokenOwner != confirmedPubTokenCreator) {
     try {
       dbRecord.mintingError =
-        "NFT token owner and pub token creator are not the same person.";
+        'NFT token owner and pub token creator are not the same person.';
       dbRecord.pending = false;
       await dbRecord.save();
       const error = new HttpError(
-        "NFT token owner and token minter are not the same person.",
+        'NFT token owner and token minter are not the same person.',
         403
       );
       return next(error);
     } catch (err) {
       const error = new HttpError(
-        "Database failed to update NFT token owner and pub token creator are not the same person.",
+        'Database failed to update NFT token owner and pub token creator are not the same person.',
         500
       );
       return next(error);
@@ -693,17 +694,17 @@ const initMrr = async (req, res, next) => {
   // if check to confirm pub token owner = unconfirmed trx creator
   if (confirmedPubTokenCreator != notConfirmedTrxCreator) {
     try {
-      dbRecord.mintingError = "Pub token creator does not equal trx creator.";
+      dbRecord.mintingError = 'Pub token creator does not equal trx creator.';
       dbRecord.pending = false;
       await dbRecord.save();
       const error = new HttpError(
-        "Public record token creator does not equal trx creator.",
+        'Public record token creator does not equal trx creator.',
         403
       );
       return next(error);
     } catch (err) {
       const error = new HttpError(
-        "Failed to update db that Pub token creator does not equal trx creator.",
+        'Failed to update db that Pub token creator does not equal trx creator.',
         500
       );
       return next(error);
@@ -714,17 +715,17 @@ const initMrr = async (req, res, next) => {
   if (confirmedNFTTokenOwner != dbRecord.confirmedNFTTokenOwner.toLowerCase()) {
     try {
       dbRecord.mintingError =
-        "NFT token owner does not equal record creator at time of minting.";
+        'NFT token owner does not equal record creator at time of minting.';
       dbRecord.pending = false;
       await dbRecord.save();
       const error = new HttpError(
-        "NFT token owner does not equal record creator at time of minting.",
+        'NFT token owner does not equal record creator at time of minting.',
         403
       );
       return next(error);
     } catch (err) {
       const error = new HttpError(
-        "Databased failed to update that confirmed NFT token owner does not equal record creator at time of minting.",
+        'Databased failed to update that confirmed NFT token owner does not equal record creator at time of minting.',
         500
       );
       return next(error);
@@ -737,7 +738,7 @@ const initMrr = async (req, res, next) => {
   dbRecord.PubTrxHash = reportedTrxHash;
 
   // prepend ipfs:// to image
-  const metadataImage = "ipfs://" + dbRecord.image;
+  const metadataImage = 'ipfs://' + dbRecord.image;
 
   // initiate mint to mirror contract
   let mrrTrx;
@@ -757,9 +758,9 @@ const initMrr = async (req, res, next) => {
       dbRecord.dna
     );
     const gas = await tx.estimateGas({ from: account });
-    const gasPrice = Web3.utils.toWei("60", "gwei");
+    const gasPrice = Web3.utils.toWei('60', 'gwei');
     const data = tx.encodeABI();
-    const nonce = await web3Polygon.eth.getTransactionCount(account, "latest");
+    const nonce = await web3Polygon.eth.getTransactionCount(account, 'latest');
     const txData = {
       from: account,
       to: MirrorContract.options.address,
@@ -770,22 +771,22 @@ const initMrr = async (req, res, next) => {
     };
 
     mrrTrx = await web3Polygon.eth.sendTransaction(txData);
-    console.log("minted @ initMrr");
+    console.log('minted @ initMrr');
   } catch (err) {
     // if mint fails update db
     try {
-      console.log("mrr error:", err);
+      console.log('mrr error:', err);
       dbRecord.pending = true;
-      dbRecord.mrrTrxError = "Minting error occured at initMrr.";
+      dbRecord.mrrTrxError = 'Minting error occured at initMrr.';
       await dbRecord.save();
     } catch (err) {
       throw new Error(
-        "Failed updating database with mint error at initMrr.",
+        'Failed updating database with mint error at initMrr.',
         err
       );
     }
     const error = new HttpError(
-      "Mirror mint failed at network at init mirror.",
+      'Mirror mint failed at network at init mirror.',
       424
     );
     return next(error);
@@ -808,15 +809,15 @@ const initMrr = async (req, res, next) => {
         dbRecord.mrrTrxHash = mrrTrx.transactionHash;
         dbRecord.pending = false;
         dbRecord.mintingComplete = true;
-        dbRecord.mrrTokenId = mrrTokenIdFinal ? mrrTokenIdFinal : "";
-        dbRecord.mrrMintWhere = "initMrr";
+        dbRecord.mrrTokenId = mrrTokenIdFinal ? mrrTokenIdFinal : '';
+        dbRecord.mrrMintWhere = 'initMrr';
         await dbRecord.save();
         console.log(
           `minted token ${mrrTokenIdFinal} @ initMrr, pending status set to false`
         );
       } catch (err) {
         console.log(err);
-        throw new Error("Failed to save Mirror Trx Hash to DB.", 424);
+        throw new Error('Failed to save Mirror Trx Hash to DB.', 424);
       }
     }
 
@@ -826,11 +827,11 @@ const initMrr = async (req, res, next) => {
         code: 201,
       });
     } catch (err) {
-      const error = new HttpError("MrrMint response failed.", 424);
+      const error = new HttpError('MrrMint response failed.', 424);
       return next(error);
     }
   } else {
-    const error = new HttpError("Mirror transaction did not mint.");
+    const error = new HttpError('Mirror transaction did not mint.');
     return next(error);
   }
 };
@@ -845,8 +846,8 @@ const initRecord = async (req, res, next) => {
     .toLocaleString()
     .split(/\D/)
     .slice(0, 3)
-    .map((num) => num.padStart(2, "0"))
-    .join("/");
+    .map((num) => num.padStart(2, '0'))
+    .join('/');
 
   // image time stamp
   const timeStampImage = Date.now();
@@ -856,7 +857,7 @@ const initRecord = async (req, res, next) => {
 
   // if no errors in express validator error object
   if (!errors.isEmpty()) {
-    const error = new HttpError("Invalid inputs passed.", 422);
+    const error = new HttpError('Invalid inputs passed.', 422);
     return next(error);
   }
 
@@ -882,9 +883,9 @@ const initRecord = async (req, res, next) => {
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   // BAYC
-  if (req.body.nftTokenType === "BAYC") {
+  if (req.body.nftTokenType === 'BAYC') {
     try {
-      const baycAddr = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"; // BAYC contract address
+      const baycAddr = '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D'; // BAYC contract address
       const web3Eth = createAlchemyWeb3(alchemyURLEth, {
         writeProvider: hdWalletEth,
       });
@@ -896,7 +897,7 @@ const initRecord = async (req, res, next) => {
       confirmedNFTTokenOwner = confirmedBAYCTokenOwner;
     } catch (err) {
       console.log(err);
-      const error = new HttpError("Network error calling BAYC contract.", 424);
+      const error = new HttpError('Network error calling BAYC contract.', 424);
       return next(error);
     }
 
@@ -906,10 +907,10 @@ const initRecord = async (req, res, next) => {
 
   // TEST
   // change
-  if (req.body.nftTokenType === "TEST") {
+  if (req.body.nftTokenType === 'TEST') {
     try {
       // change
-      const testAddr = "0x52EA23F2fef28005bEf1DA54e971517C5863a1ad";
+      const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
       let web3Polygon = createAlchemyWeb3(alchemyURLPolygon, {
         writeProvider: hdWalletEth,
       });
@@ -926,7 +927,7 @@ const initRecord = async (req, res, next) => {
       console.log(err);
       const error = new HttpError(
         // change
-        "Error calling Test contract or the token number may not exist.",
+        'Error calling Test contract or the token number may not exist.',
         424
       );
       return next(error);
@@ -956,7 +957,7 @@ const initRecord = async (req, res, next) => {
   // check if confirmedNFTTokenOwner exists
   if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
     const error = new HttpError(
-      "Network error calling NFT project contract or you do not own tokens form this project.",
+      'Network error calling NFT project contract or you do not own tokens form this project.',
       424
     );
     return next(error);
@@ -967,7 +968,7 @@ const initRecord = async (req, res, next) => {
 
   // check if confirmed NFTTokenOwner matches unconfirmed user, return error if addresses do not match
   if (confirmedNFTTokenOwner != user) {
-    const error = new HttpError("You do not own this NFT.", 403);
+    const error = new HttpError('You do not own this NFT.', 403);
     return next(error);
   }
 
@@ -998,7 +999,7 @@ const initRecord = async (req, res, next) => {
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   // BAYC
-  if (req.body.nftTokenType === "BAYC") {
+  if (req.body.nftTokenType === 'BAYC') {
     try {
       // get BAYC metadata for specific token
       const token = req.body.nftTokenId;
@@ -1007,7 +1008,7 @@ const initRecord = async (req, res, next) => {
       );
     } catch (err) {
       const error = new HttpError(
-        "Network error. Could not fetch your NFT metadata.",
+        'Network error. Could not fetch your NFT metadata.',
         424
       );
       return next(error);
@@ -1024,12 +1025,12 @@ const initRecord = async (req, res, next) => {
         responseImage = await axios.get(
           `https://infura-ipfs.io/ipfs/${NFTCID}`,
           {
-            responseType: "arraybuffer",
+            responseType: 'arraybuffer',
           }
         );
       } catch (err) {
         const error = new HttpError(
-          "Network error. Failed to retrieve your NFT image from ipfs.",
+          'Network error. Failed to retrieve your NFT image from ipfs.',
           424
         );
         return next(error);
@@ -1037,7 +1038,7 @@ const initRecord = async (req, res, next) => {
     }
 
     // convert response image to Base64
-    const returnedB64 = Buffer.from(responseImage.data).toString("base64");
+    const returnedB64 = Buffer.from(responseImage.data).toString('base64');
 
     // format image variable with Base64 image for svg insertion
     const image = `<image
@@ -1061,7 +1062,7 @@ const initRecord = async (req, res, next) => {
     // svg image keyword formatted
     const prKeyword = req.body.attrKeyword
       ? ` ${req.body.attrKeyword} =&gt;`
-      : "";
+      : '';
 
     // build record object that will be saved to db
     record = {
@@ -1093,10 +1094,10 @@ const initRecord = async (req, res, next) => {
           return {
             svg: template(
               image,
-              textOne ? textOne : "",
-              textTwo ? textTwo : "",
-              textThree ? textThree : "",
-              textFour ? textFour : "",
+              textOne ? textOne : '',
+              textTwo ? textTwo : '',
+              textThree ? textThree : '',
+              textFour ? textFour : '',
               ownerAddr,
               nftTokenId,
               timeStampImage,
@@ -1104,26 +1105,26 @@ const initRecord = async (req, res, next) => {
             ),
             modeName: template.name,
             DNA: await Web3.utils.soliditySha3(
-              { t: "string", v: record.name },
-              { t: "string", v: record.description },
+              { t: 'string', v: record.name },
+              { t: 'string', v: record.description },
               {
-                t: "string",
+                t: 'string',
                 v: template(
                   image,
-                  textOne ? textOne : "",
-                  textTwo ? textTwo : "",
-                  textThree ? textThree : "",
-                  textFour ? textFour : "",
+                  textOne ? textOne : '',
+                  textTwo ? textTwo : '',
+                  textThree ? textThree : '',
+                  textFour ? textFour : '',
                   ownerAddr,
                   nftTokenId,
                   timeStampImage,
                   creationDate
                 ),
               },
-              { t: "string", v: record.message },
-              { t: "string", v: record.prCreateDate },
-              { t: "string", v: record.attrNFTName },
-              { t: "string", v: record.attrKeyword }
+              { t: 'string', v: record.message },
+              { t: 'string', v: record.prCreateDate },
+              { t: 'string', v: record.attrNFTName },
+              { t: 'string', v: record.attrKeyword }
             ),
           };
         })
@@ -1136,13 +1137,13 @@ const initRecord = async (req, res, next) => {
       });
     } catch (err) {
       console.log(err);
-      const error = new HttpError("Could not create image mode.", 503);
+      const error = new HttpError('Could not create image mode.', 503);
       return next(error);
     }
   }
 
   // TEST
-  if (req.body.nftTokenType === "TEST") {
+  if (req.body.nftTokenType === 'TEST') {
     try {
       // get BAYC metadata for specific token
       const token = req.body.nftTokenId;
@@ -1152,31 +1153,31 @@ const initRecord = async (req, res, next) => {
       );
     } catch (err) {
       const error = new HttpError(
-        "Network error. Could not fetch your NFT metadata.",
+        'Network error. Could not fetch your NFT metadata.',
         424
       );
       return next(error);
     }
 
     // get image from ipfs if responseURI available
-    console.log("responseURI:", responseURI);
+    console.log('responseURI:', responseURI);
     if (responseURI) {
       // get image CID for BAYC from metadata string
       NFTCID = responseURI.data.image.substring(7);
 
-      console.log("TEST Token image CID:", NFTCID);
+      console.log('TEST Token image CID:', NFTCID);
 
       // get image from ipfs
       try {
         responseImage = await axios.get(
           `https://infura-ipfs.io/ipfs/${NFTCID}`,
           {
-            responseType: "arraybuffer",
+            responseType: 'arraybuffer',
           }
         );
       } catch (err) {
         const error = new HttpError(
-          "Network error. Failed to retrieve your NFT image from ipfs.",
+          'Network error. Failed to retrieve your NFT image from ipfs.',
           424
         );
         return next(error);
@@ -1184,7 +1185,7 @@ const initRecord = async (req, res, next) => {
     }
 
     // convert response image to Base64
-    const returnedB64 = Buffer.from(responseImage.data).toString("base64");
+    const returnedB64 = Buffer.from(responseImage.data).toString('base64');
 
     // format image variable with Base64 image for svg insertion
     const image = `<image
@@ -1208,7 +1209,7 @@ const initRecord = async (req, res, next) => {
     // svg image keyword formatted
     const prKeyword = req.body.attrKeyword
       ? ` ${req.body.attrKeyword} =&gt;`
-      : "";
+      : '';
 
     // build record object that will be saved to db
     record = {
@@ -1241,10 +1242,10 @@ const initRecord = async (req, res, next) => {
           return {
             svg: template(
               image,
-              textOne ? textOne : "",
-              textTwo ? textTwo : "",
-              textThree ? textThree : "",
-              textFour ? textFour : "",
+              textOne ? textOne : '',
+              textTwo ? textTwo : '',
+              textThree ? textThree : '',
+              textFour ? textFour : '',
               ownerAddr,
               nftTokenId,
               timeStampImage,
@@ -1252,26 +1253,26 @@ const initRecord = async (req, res, next) => {
             ),
             modeName: template.name,
             DNA: await Web3.utils.soliditySha3(
-              { t: "string", v: record.name },
-              { t: "string", v: record.description },
+              { t: 'string', v: record.name },
+              { t: 'string', v: record.description },
               {
-                t: "string",
+                t: 'string',
                 v: template(
                   image,
-                  textOne ? textOne : "",
-                  textTwo ? textTwo : "",
-                  textThree ? textThree : "",
-                  textFour ? textFour : "",
+                  textOne ? textOne : '',
+                  textTwo ? textTwo : '',
+                  textThree ? textThree : '',
+                  textFour ? textFour : '',
                   ownerAddr,
                   nftTokenId,
                   timeStampImage,
                   creationDate
                 ),
               },
-              { t: "string", v: record.message },
-              { t: "string", v: record.prCreateDate },
-              { t: "string", v: record.attrNFTName },
-              { t: "string", v: record.attrKeyword }
+              { t: 'string', v: record.message },
+              { t: 'string', v: record.prCreateDate },
+              { t: 'string', v: record.attrNFTName },
+              { t: 'string', v: record.attrKeyword }
             ),
           };
         })
@@ -1285,11 +1286,11 @@ const initRecord = async (req, res, next) => {
       });
     } catch (err) {
       console.log(err);
-      const error = new HttpError("Could not create image mode.", 503);
+      const error = new HttpError('Could not create image mode.', 503);
       return next(error);
     }
     // change
-    console.log("TESTMaster[0] name:", TESTMaster[0].name);
+    console.log('TESTMaster[0] name:', TESTMaster[0].name);
   }
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1334,12 +1335,12 @@ const initRecord = async (req, res, next) => {
       NFTCID: record.NFTCID,
     });
 
-    console.log("dbRecord:", dbRecord);
+    console.log('dbRecord:', dbRecord);
 
     await dbRecord.save();
   } catch (err) {
     console.log(err);
-    const error = new HttpError("Creating record failed.", 500);
+    const error = new HttpError('Creating record failed.', 500);
     return next(error);
   }
 
@@ -1365,7 +1366,7 @@ const initRecord = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError(
-      "Network failure. Response object not returned to client.",
+      'Network failure. Response object not returned to client.',
       424
     );
     return next(error);
@@ -1379,7 +1380,7 @@ const suggestion = async (req, res, next) => {
 
   // if express validators errors, next
   if (!errors.isEmpty()) {
-    const error = new HttpError("Invalid inputs passed.", 422);
+    const error = new HttpError('Invalid inputs passed.', 422);
     return next(error);
   }
 
@@ -1391,7 +1392,7 @@ const suggestion = async (req, res, next) => {
     });
     await newSuggestion.save();
   } catch (err) {
-    const error = new HttpError("Failed to save new suggestion.", 424);
+    const error = new HttpError('Failed to save new suggestion.', 424);
     return next(error);
   }
 };
@@ -1404,7 +1405,7 @@ const sendMail = async (req, res, next) => {
 
   // if validation errors, next
   if (!errors.isEmpty()) {
-    const error = new HttpError("Invalid inputs passed.", 422);
+    const error = new HttpError('Invalid inputs passed.', 422);
     return next(error);
   }
 
@@ -1413,12 +1414,12 @@ const sendMail = async (req, res, next) => {
   try {
     dbRecord = await Record.find({ dna: req.body.dna });
   } catch (err) {
-    throw new Error("Invalid request to mail.", err);
+    throw new Error('Invalid request to mail.', err);
   }
 
   // check that record exists and length is 1
   if (dbRecord.length > 1 || !dbRecord) {
-    throw new Error("Unique record does not exist.");
+    throw new Error('Unique record does not exist.');
   }
 
   // get object out of array
@@ -1426,7 +1427,7 @@ const sendMail = async (req, res, next) => {
 
   // check user in dbRecord matches sendmail request user
   if (dbRecord.user.toLowerCase() != req.body.userAddress.toLowerCase()) {
-    throw new Error("User in db does not match user in mail send request.");
+    throw new Error('User in db does not match user in mail send request.');
   }
 
   // check confirmedNFT owner in dbRecord matches sendmail request user
@@ -1434,12 +1435,12 @@ const sendMail = async (req, res, next) => {
     dbRecord.confirmedNFTTokenOwner.toLowerCase() !=
     req.body.userAddress.toLowerCase()
   ) {
-    throw new Error("NFT owner in db does not match user in mail request.");
+    throw new Error('NFT owner in db does not match user in mail request.');
   }
 
   // check req.body token ID match dbrecord token id
   if (dbRecord.nftTokenId != req.body.nftTokenId) {
-    throw new Error("Token Ids do not match.");
+    throw new Error('Token Ids do not match.');
   }
 
   // create email object
@@ -1480,7 +1481,7 @@ const sendMail = async (req, res, next) => {
   try {
     await createEmail.save();
   } catch (err) {
-    const error = new HttpError("Failed to save email to db.", 503);
+    const error = new HttpError('Failed to save email to db.', 503);
     return next(error);
   }
 
@@ -1492,7 +1493,7 @@ const sendMail = async (req, res, next) => {
       emailPending: email.emailPending,
     });
   } catch (err) {
-    const error = new HttpError("Email generation failed.", 424);
+    const error = new HttpError('Email generation failed.', 424);
     return next(error);
   }
 };
