@@ -5,7 +5,7 @@ import { makeStyles } from '@mui/styles';
 import SVG from 'react-inlinesvg';
 
 import { AuthContext } from '../shared/context/auth-context';
-import PublicRecordBuild from '../assets/contracts/VisibleRecords.json';
+import PublicRecordBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
