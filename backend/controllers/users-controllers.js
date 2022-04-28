@@ -15,8 +15,8 @@ const { mintInterval } = require('../events/mintInterval');
 const { emailInterval } = require('../events/emailInterval');
 
 // PUBCONTRACTS
-const PublicRecordBuild = require('../assets/contracts/VisibleRecords.json');
-const PublicMirrorBuild = require('../assets/contracts/TokenMirror.json');
+const PublicRecordBuild = require('../assets/contracts/VisibleModes.json');
+const PublicMirrorBuild = require('../assets/contracts/ModeMirror.json');
 
 // BAYC CONTRACT AND TEMPLATES
 const BAYCContract = require('../assets/contracts/PRABI/BAYC.json');
