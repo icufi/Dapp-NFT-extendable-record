@@ -4,17 +4,17 @@ const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
 
 const Record = require('../models/record');
 
-//BAYC CONTRACT
+// BAYC CONTRACT
 const BAYCContract = require('../assets/contracts/PRABI/BAYC.json');
 
-//TEST TOKENS CONTRACT
+// TEST TOKENS CONTRACT
 const TESTContract = require('../assets/contracts/PRABI/TestTokens.json');
 
-//PUBLIC CONTRACTS
-const PublicRecordBuild = require('../assets/contracts/VisibleRecords.json');
-const PublicMirrorBuild = require('../assets/contracts/TokenMirror.json');
+// PUBLIC CONTRACTS
+const PublicRecordBuild = require('../assets/contracts/VisibleModes.json');
+const PublicMirrorBuild = require('../assets/contracts/ModeMirror.json');
 
-//mintInterval mints at timed interval a mrrToken if a corresponding prToken has been minted
+// mintInterval mints at timed interval a mrrToken if a corresponding prToken has been minted
 exports.mintInterval = async () => {
   const mnemonic = process.env.MNEMONIC_ADMIN;
 
@@ -206,9 +206,9 @@ exports.mintInterval = async () => {
         }
       }
 
-      //owner Check cycle
+      // owner Check cycle
       // if prTokenId exists at contract and mrrTokenID does not exist, get attrCreatorAddr from pubContract by prTokenId
-      let confirmedPubTokenCreator; //guaranteed accurate, set to msg.sender in contract safemint function
+      let confirmedPubTokenCreator; // guaranteed accurate, set to msg.sender in contract safemint function
       if (prTokenId && (!mrrTokenId || mrrTokenId == 0)) {
         try {
           confirmedPubTokenCreator = await PubContract.methods
@@ -223,14 +223,14 @@ exports.mintInterval = async () => {
           continue;
         }
 
-        //set address to lower case for comparisons
+        // set address to lower case for comparisons
         confirmedPubTokenCreator = confirmedPubTokenCreator.toLowerCase();
 
-        //if checks for supported token types filter
-        //check NFT owner status per record.nftTokenType
+        // if checks for supported token types filter
+        // check NFT owner status per record.nftTokenType
         let confirmedNFTTokenOwner;
 
-        //START NFTPACK CONTRACT CALL-----------------------------------------------------------------------------------------------------------------------------
+        // START NFTPACK CONTRACT CALL-----------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -246,7 +246,7 @@ exports.mintInterval = async () => {
           let web3Eth;
           let baycContract;
 
-          //initial BAYC contract
+          // initial BAYC contract
           try {
             web3Eth = new createAlchemyWeb3(alchemyURLEth);
             baycContract = new web3Eth.eth.Contract(BAYCContract, baycAddr);
@@ -262,7 +262,7 @@ exports.mintInterval = async () => {
             const BaycTokenOwner = await baycContract.methods
               .ownerOf(record.nftTokenId)
               .call();
-            const confirmedBaycTokenOwner = BaycTokenOwner.toLowerCase(); //addresses to lowercase for comparisons
+            const confirmedBaycTokenOwner = BaycTokenOwner.toLowerCase(); // addresses to lowercase for comparisons
             confirmedNFTTokenOwner = confirmedBaycTokenOwner;
             console.log('Bayc owner address:', confirmedNFTTokenOwner);
           } catch (err) {
@@ -273,24 +273,24 @@ exports.mintInterval = async () => {
 
         // TEST
         if (record.nftTokenType === 'TEST') {
-          //change
+          // change
           const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
           let web3Polygon;
 
-          //change
+          // change
           let testContract;
 
-          //initiate TEST contract
+          // initiate TEST contract
           try {
             web3Polygon = new createAlchemyWeb3(alchemyURLPolygon);
 
-            //change
+            // change
             testContract = new web3Polygon.eth.Contract(
               TESTContract.abi,
               testAddr
             );
           } catch (err) {
-            //change
+            // change
             console.log(
               'Failed to connect to Test contract on Ethereum network.',
               err
@@ -299,17 +299,17 @@ exports.mintInterval = async () => {
           }
 
           try {
-            //change
+            // change
             const NFTTokenOwner = await testContract.methods
               .ownerOf(record.nftTokenId)
               .call();
-            confirmedNFTTokenOwner = NFTTokenOwner.toLowerCase(); //addresses to lowercase for comparisons
+            confirmedNFTTokenOwner = NFTTokenOwner.toLowerCase(); // addresses to lowercase for comparisons
             console.log(
               'Confirmed Token owner address:',
               confirmedNFTTokenOwner
             );
           } catch (err) {
-            //change
+            // change
             console.log('Test contract call failed.');
             continue;
           }
@@ -323,15 +323,15 @@ exports.mintInterval = async () => {
         //-------------------------------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------------------------
         //-------------------------------------------------------------------------------------------------------------------------------------------------
-        //END NFTPACK CONTRACT CALL^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        // END NFTPACK CONTRACT CALL^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-        //if no supported tokens owned or pubToken user does not own any supported NFTs at time of interval
+        // if no supported tokens owned or pubToken user does not own any supported NFTs at time of interval
         if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
           console.log('No supported NFT tokens owned.');
           continue;
         }
 
-        //if pubTokenCreator does not equal nftOwnerAddr or db record creator, set pending status to false and set mint error status
+        // if pubTokenCreator does not equal nftOwnerAddr or db record creator, set pending status to false and set mint error status
         if (
           confirmedPubTokenCreator != confirmedNFTTokenOwner ||
           confirmedPubTokenCreator !=
@@ -352,7 +352,7 @@ exports.mintInterval = async () => {
           }
         }
 
-        //if attrCreatorAddr equals currnet NFT token owner and bayc token owner at the time that record data was generated. start mrr mint...
+        // if attrCreatorAddr equals currnet NFT token owner and bayc token owner at the time that record data was generated. start mrr mint...
         if (
           confirmedPubTokenCreator === confirmedNFTTokenOwner &&
           confirmedPubTokenCreator ===
@@ -362,13 +362,13 @@ exports.mintInterval = async () => {
           let mrrTrx;
           console.log('in mint function');
 
-          //prepend ipfs:// to image
+          // prepend ipfs:// to image
           const metadataImage = 'ipfs://' + record.image;
 
-          //sleep to slow down loop
+          // sleep to slow down loop
           await sleep(10000);
 
-          //mrrMint function takes in prTokenId dbRecord data, confirmedPubTokenCreator, and dna from dbRecord
+          // mrrMint function takes in prTokenId dbRecord data, confirmedPubTokenCreator, and dna from dbRecord
           try {
             const account = accountsPolygon[3];
             const tx = MirrorContract.methods.safeMint(
@@ -407,9 +407,9 @@ exports.mintInterval = async () => {
             continue;
           }
 
-          //if trx success, call for mrrtokenId bc not returned on transaction receipt
+          // if trx success, call for mrrtokenId bc not returned on transaction receipt
           if (mrrTrx.status === true) {
-            //sleep to slow down loop allow for trx to populate network
+            // sleep to slow down loop allow for trx to populate network
             await sleep(5000);
 
             let mrrTokenIdFinal;
@@ -425,7 +425,7 @@ exports.mintInterval = async () => {
                 err
               );
             } finally {
-              //if mrrTokenId exists update otherwise update empty string (will be caught in next loop iteration and updated), update database with mrrTrxHash, prTokenId, mrrTokenIdFinal, pending false, mintingComplete true, mintwhere,
+              // if mrrTokenId exists update otherwise update empty string (will be caught in next loop iteration and updated), update database with mrrTrxHash, prTokenId, mrrTokenIdFinal, pending false, mintingComplete true, mintwhere,
               try {
                 record.mrrTrxHash = mrrTrx.transactionHash;
                 record.prTokenId = prTokenId;
