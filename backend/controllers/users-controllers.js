@@ -50,11 +50,7 @@ const mrrQueue = async (req, res, next) => {
   const { modeDNA } = req.body;
   let { modeName } = req.body;
   let dbRecord;
-  let record;
   let svg;
-  let user;
-  let recordUser;
-  let ownerAddr;
   let pinnedImgHsh;
   let confirmDNA;
   let contractDNA;
@@ -91,15 +87,12 @@ const mrrQueue = async (req, res, next) => {
   }
 
   // get record as object
-  console.log(dbRecord);
-  record = dbRecord[0];
+  const [record] = dbRecord;
 
   // svg image owner variable set to user confirmed against BAYC contract
-  ownerAddr = record.confirmedNFTTokenOwner.toLowerCase();
-  user = req.body.user.toLowerCase();
-  console.log('user:', user)
-  recordUser = record.user.toLowerCase();
-  console.log('recordUser:', recordUser)
+  const ownerAddr = record.confirmedNFTTokenOwner.toLowerCase();
+  const user = req.body.user.toLowerCase();
+  const recordUser = record.user.toLowerCase();
 
   // ownership check
   if (ownerAddr !== user || recordUser !== user) {
