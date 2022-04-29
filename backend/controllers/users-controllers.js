@@ -44,7 +44,7 @@ emailInterval();
 // sets existing record to pending status true before mint, return nothing to frontend
 const mrrQueue = async (req, res, next) => {
   // pinata credentials
-  const pinata = pinataSDK(process.env.USER, process.env.API_KEY);
+  const pinata = pinataSDK(process.env.PINATA_USER, process.env.PINATA_KEY);
 
   // get dna from req.body to call db record
   const { modeDNA } = req.body;
@@ -94,10 +94,12 @@ const mrrQueue = async (req, res, next) => {
   console.log(dbRecord);
   record = dbRecord[0];
 
-  // svg image owner variable set to user that has been confirmed against BAYC contract
+  // svg image owner variable set to user confirmed against BAYC contract
   ownerAddr = record.confirmedNFTTokenOwner.toLowerCase();
   user = req.body.user.toLowerCase();
+  console.log('user:', user)
   recordUser = record.user.toLowerCase();
+  console.log('recordUser:', recordUser)
 
   // ownership check
   if (ownerAddr !== user || recordUser !== user) {
