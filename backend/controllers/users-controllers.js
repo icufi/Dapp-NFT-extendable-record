@@ -172,7 +172,6 @@ const mrrQueue = async (req, res, next) => {
 
     // find the index of the requested mode in the baycmaster array
     modeIndex = BAYCMaster.findIndex((modes) => requestedMode === modes);
-    console.log('modeIndex:', modeIndex);
 
     // create svg image using mode requested by user
     svg = requestedMode(
@@ -237,6 +236,7 @@ const mrrQueue = async (req, res, next) => {
 
     // filter master mode array for mode requested by user
     requestedMode = TESTMaster.filter((mode) => modeName === mode.name);
+    console.log('requestMode:', requestedMode);
     requestedMode = requestedMode[0];
 
     console.log('requested mode:', requestedMode);
@@ -1155,12 +1155,9 @@ const initRecord = async (req, res, next) => {
     }
 
     // get image from ipfs if responseURI available
-    console.log('responseURI:', responseURI);
     if (responseURI) {
       // get image CID for BAYC from metadata string
       NFTCID = responseURI.data.image.substring(7);
-
-      console.log('TEST Token image CID:', NFTCID);
 
       // get image from ipfs
       try {
@@ -1329,8 +1326,6 @@ const initRecord = async (req, res, next) => {
       textFour: record.textFour,
       NFTCID: record.NFTCID,
     });
-
-    console.log('dbRecord:', dbRecord);
 
     await dbRecord.save();
   } catch (err) {
