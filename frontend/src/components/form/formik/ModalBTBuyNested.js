@@ -54,8 +54,8 @@ export default function NestedModal({ owner, ...props }) {
       BuilderTokensBuild.abi,
       BuilderTokensBuild.networks[networkId].address
     );
-
-    const value = event.tokenCount * 60;
+// todo change token value for mint
+    const value = event.tokenCount * .005;
     const payment = web3.utils.toWei(value.toString(), 'ether');
 
     try {
