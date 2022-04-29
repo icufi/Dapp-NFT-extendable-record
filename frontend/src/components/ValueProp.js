@@ -46,7 +46,6 @@ const ValueProp = (props) => {
     auth.detect();
     try {
       const response = await sendRequest(
-        // eslint-disable-next-line no-undef
         `${process.env.REACT_APP_BACKEND_URL}/users/initRecord`,
         'POST',
         JSON.stringify({
