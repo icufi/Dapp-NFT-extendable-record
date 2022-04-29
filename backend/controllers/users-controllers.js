@@ -733,7 +733,7 @@ const initMrr = async (req, res, next) => {
   dbRecord.PubTrxHash = reportedTrxHash;
 
   // prepend ipfs:// to image
-  const metadataImage = 'ipfs://' + dbRecord.image;
+  const metadataImage = `ipfs://${dbRecord.image}`;
 
   // initiate mint to mirror contract
   let mrrTrx;
@@ -1226,7 +1226,7 @@ const initRecord = async (req, res, next) => {
     };
 
     // START TEMPLATE FILTER-
-    let ownerAddr = record.confirmedNFTTokenOwner;
+    const ownerAddr = record.confirmedNFTTokenOwner;
     try {
       modeArray = await Promise.all(
         // change
@@ -1351,7 +1351,6 @@ const initRecord = async (req, res, next) => {
       attrKeyword: record.attrKeyword,
       modeArray,
     });
-
     return;
   } catch (err) {
     console.log(err);
