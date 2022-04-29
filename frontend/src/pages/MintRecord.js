@@ -101,7 +101,13 @@ const MintRecord = ({ record }) => {
     sendRequest(
       `${process.env.REACT_APP_BACKEND_URL}/users/mrrQueue`,
       'POST',
-      JSON.stringify({ modeDNA, modeName, user: auth.currentAccount }),
+      JSON.stringify({
+        modeDNA,
+        modeName,
+        // todo test user value added here
+        user: '0x46EFbAedc92067E6d60E84ED6395099723252496',
+        // user: auth.currentAccount
+      }),
       {
         'Content-Type': 'application/json',
       }
@@ -126,7 +132,7 @@ const MintRecord = ({ record }) => {
             responseMintObject.dna
           )
           .send({
-// todo reinstate auth.provider.selectedAddress changed for testing
+            // todo reinstate auth.provider.selectedAddress changed for testing
             from: '0x46EFbAedc92067E6d60E84ED6395099723252496',
             // from: auth.provider.selectedAddress,
             value: payment,
