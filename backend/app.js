@@ -6,8 +6,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const compression = require('compression');
 
-
 const usersRoutes = require('./routes/users-routes');
+
+require('dotenv').config();
 
 const app = express();
 
