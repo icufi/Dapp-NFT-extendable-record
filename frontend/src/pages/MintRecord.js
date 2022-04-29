@@ -99,7 +99,6 @@ const MintRecord = ({ record }) => {
 
     // mint record
     sendRequest(
-      // eslint-disable-next-line no-undef
       `${process.env.REACT_APP_BACKEND_URL}/users/mrrQueue`,
       'POST',
       JSON.stringify({ modeDNA, modeName, user: auth.currentAccount }),
@@ -127,7 +126,9 @@ const MintRecord = ({ record }) => {
             responseMintObject.dna
           )
           .send({
-            from: auth.provider.selectedAddress,
+// todo reinstate auth.provider.selectedAddress changed for testing
+            from: '0x46EFbAedc92067E6d60E84ED6395099723252496',
+            // from: auth.provider.selectedAddress,
             value: payment,
           });
       })
