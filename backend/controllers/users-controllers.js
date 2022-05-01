@@ -708,7 +708,9 @@ const initMrr = async (req, res, next) => {
   }
 
   // if check to confirm BAYC token owner = db confirmed token owner is the same owner when record was generated
-  if (confirmedNFTTokenOwner !== dbRecord.confirmedNFTTokenOwner.toLowerCase()) {
+  if (
+    confirmedNFTTokenOwner !== dbRecord.confirmedNFTTokenOwner.toLowerCase()
+  ) {
     try {
       dbRecord.mintingError =
         'NFT token owner does not equal record creator at time of minting.';
@@ -857,7 +859,7 @@ const initRecord = async (req, res, next) => {
   // get owner of nft token from ethereum contract
   let confirmedNFTTokenOwner;
 
-  // this variable is set per tokentype and used in record body creation below
+  // variable set per tokentype and used in record body creation below
   let attrNFTName;
 
   // START NFTPACK
@@ -904,7 +906,7 @@ const initRecord = async (req, res, next) => {
     try {
       // change
       const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
-      let web3Polygon = createAlchemyWeb3(alchemyURLPolygon, {
+      const web3Polygon = createAlchemyWeb3(alchemyURLPolygon, {
         writeProvider: hdWalletEth,
       });
       // change
@@ -1038,22 +1040,16 @@ const initRecord = async (req, res, next) => {
         transform='matrix(1 0 0 1 18 13.5)'
       ></image>`;
 
+    // user message
+    const { message } = req.body;
+
     // word wrap helper function to format message in svg image
-    const [textOne, textTwo, textThree, textFour] = wordWrap(req.body.message, 50);
-    // textOne = msgChunks[0];
-    // textTwo = msgChunks[1];
-    // textThree = msgChunks[2];
-    // textFour = msgChunks[3];
+    const [textOne, textTwo, textThree, textFour] = wordWrap(message, 50);
 
     // svg image token id for provenance stack
     const {
       body: { nftTokenId },
     } = req;
-
-    // svg image keyword formatted
-    const prKeyword = req.body.attrKeyword
-      ? ` ${req.body.attrKeyword} =&gt;`
-      : '';
 
     // build record object that will be saved to db
     record = {
@@ -1061,7 +1057,7 @@ const initRecord = async (req, res, next) => {
       nftTokenId: req.body.nftTokenId,
       name: `${req.body.nftTokenType} ${req.body.nftTokenId} Visible Record`,
       description: `${req.body.nftTokenType} #${req.body.nftTokenId} @ ${user} => Provenance stack and ${req.body.nftTokenType}-${req.body.nftTokenId} message is unalterable, freely accessible and transferable => created ${creationDate} by verified NFT owner`,
-      message: req.body.message,
+      message,
       attrNFTName, // attrNFTName is set in the contract call to confirm owner for section above
       textOne,
       textTwo,
@@ -1123,9 +1119,7 @@ const initRecord = async (req, res, next) => {
 
       fs.writeFileSync(__dirname + `/assets/init16.svg`, modeArray[0].svg);
 
-      record.modeDNA = modeArray.map(({ DNA }) => {
-        return DNA;
-      });
+      record.modeDNA = modeArray.map(({ DNA }) => DNA);
     } catch (err) {
       console.log(err);
       const error = new HttpError('Could not create image mode.', 503);
