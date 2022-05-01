@@ -58,10 +58,6 @@ const mrrQueue = async (req, res, next) => {
   // image creation variables
   let returnedB64;
   let image;
-  let textOne;
-  let textTwo;
-  let textThree;
-  let textFour;
   let timeStampImage;
   let nftTokenId;
   let prKeyword;
@@ -147,10 +143,15 @@ const mrrQueue = async (req, res, next) => {
       ></image>`;
 
     // msg word chunks
-    textOne = record.textOne;
-    textTwo = record.textTwo;
-    textThree = record.textThree;
-    textFour = record.textFour;
+    // textOne = record.textOne;
+    // textTwo = record.textTwo;
+    // textThree = record.textThree;
+    // textFour = record.textFour;
+
+    // msg word chunks
+    const { textOne, textTwo, textThree, textFour } = record;
+
+    console.log('textOne:', textOne);
 
     // time stamp img embed
     timeStampImage = record.timeStampImage;
@@ -165,10 +166,7 @@ const mrrQueue = async (req, res, next) => {
     creationDate = record.prCreateDate;
 
     // filter master mode array for mode requested by user
-    requestedMode = BAYCMaster.filter((mode) => modeName === mode.name);
-    requestedMode = requestedMode[0];
-
-    console.log('requested mode:', requestedMode);
+    [requestedMode] = BAYCMaster.filter((mode) => modeName === mode.name);
 
     // find the index of the requested mode in the baycmaster array
     modeIndex = BAYCMaster.findIndex((modes) => requestedMode === modes);
@@ -217,10 +215,7 @@ const mrrQueue = async (req, res, next) => {
       ></image>`;
 
     // msg word chunks
-    textOne = record.textOne;
-    textTwo = record.textTwo;
-    textThree = record.textThree;
-    textFour = record.textFour;
+    const { textOne, textTwo, textThree, textFour } = record;
 
     // time stamp img embed
     timeStampImage = record.timeStampImage;
@@ -228,16 +223,11 @@ const mrrQueue = async (req, res, next) => {
     // svg image token id for provenance stack
     nftTokenId = record.nftTokenId;
 
-    // svg image keyword formatted
-    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : '';
-
     // record creation date
     creationDate = record.prCreateDate;
 
     // filter master mode array for mode requested by user
-    requestedMode = TESTMaster.filter((mode) => modeName === mode.name);
-    console.log('requestMode:', requestedMode);
-    requestedMode = requestedMode[0];
+    [requestedMode] = TESTMaster.filter((mode) => modeName === mode.name);
 
     console.log('requested mode:', requestedMode);
 
@@ -298,32 +288,30 @@ const mrrQueue = async (req, res, next) => {
   // pinata api pins image to ipfs
   try {
     // hash image to cid and save image temporarily to file system
-    fs.writeFileSync(__dirname + `/assets/${ownerAddr}.svg`, svg);
+    fs.writeFileSync(`${__dirname}/assets/${ownerAddr}.svg`, svg);
     const options = {
       pinataOptions: { cidVersion: 0 },
     };
 
     // call image from file system
     const readableStreamForFile = fs.createReadStream(
-      __dirname + `/assets/${ownerAddr}.svg`
+      `${__dirname}/assets/${ownerAddr}.svg`
     );
 
     // pin upload and pin image using pinata api
     pinnedImgHsh = await pinata
       .pinFileToIPFS(readableStreamForFile, options)
-      .then((result) => {
-        return result.IpfsHash;
-      });
+      .then((result) => result.IpfsHash);
 
     // delete temp img file from directory
-    fs.unlink(__dirname + `/assets/${ownerAddr}.svg`, (err) => {
+    fs.unlink(`${__dirname}/assets/${ownerAddr}.svg`, (err) => {
       if (err) {
         console.log(err);
       }
     });
 
     // confirm image hashing and pinning succesful
-    if ('Qm' !== pinnedImgHsh.substring(0, 2)) {
+    if (pinnedImgHsh.substring(0, 2) !== 'Qm') {
       const error = new HttpError('Image failed to pin to ipfs.', 503);
       return next(error);
     }
@@ -340,7 +328,7 @@ const mrrQueue = async (req, res, next) => {
     contractDNA = await Web3.utils.soliditySha3(
       { t: 'string', v: record.name },
       { t: 'string', v: record.description },
-      { t: 'string', v: 'ipfs://' + pinnedImgHsh },
+      { t: 'string', v: `ipfs://${pinnedImgHsh}` },
       { t: 'string', v: record.message },
       { t: 'string', v: record.prCreateDate },
       { t: 'string', v: record.attrNFTName },
@@ -395,7 +383,6 @@ const mrrQueue = async (req, res, next) => {
       attrKeyword: record.attrKeyword,
       mode: modeName,
     });
-    return;
   } catch (err) {
     console.log(err);
     const error = new HttpError(
@@ -1393,7 +1380,7 @@ const sendMail = async (req, res, next) => {
   }
 
   // get object out of array
-  dbRecord = dbRecord[0];
+  dbRecord = [dbRecord];
 
   // check user in dbRecord matches sendmail request user
   if (dbRecord.user.toLowerCase() != req.body.userAddress.toLowerCase()) {
@@ -1402,14 +1389,14 @@ const sendMail = async (req, res, next) => {
 
   // check confirmedNFT owner in dbRecord matches sendmail request user
   if (
-    dbRecord.confirmedNFTTokenOwner.toLowerCase() !=
+    dbRecord.confirmedNFTTokenOwner.toLowerCase() !==
     req.body.userAddress.toLowerCase()
   ) {
     throw new Error('NFT owner in db does not match user in mail request.');
   }
 
   // check req.body token ID match dbrecord token id
-  if (dbRecord.nftTokenId != req.body.nftTokenId) {
+  if (dbRecord.nftTokenId !== req.body.nftTokenId) {
     throw new Error('Token Ids do not match.');
   }
 
