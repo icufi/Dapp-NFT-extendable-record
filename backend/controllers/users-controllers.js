@@ -495,18 +495,19 @@ const initMrr = async (req, res, next) => {
       throw new Error('Record is not unique or does not exist!');
     }
     dbRecord = dbRecord[0];
+    console.log('dbRecord:', dbRecord);
   } catch (err) {
     const error = new HttpError('Failed to find a unique record!', 503);
     return next(error);
   }
 
   // if confirmed pubToken creator does not match trx prToken owner or does not match db
-  let notConfirmedTrxCreator = req.body.trx.from.toLowerCase();
+  const notConfirmedTrxCreator = req.body.trx.from.toLowerCase();
 
   if (
-    notConfirmedTrxCreator != confirmedPubTokenCreator ||
-    notConfirmedTrxCreator != dbRecord.confirmedNFTTokenOwner ||
-    notConfirmedTrxCreator != dbRecord.user
+    notConfirmedTrxCreator !== confirmedPubTokenCreator ||
+    notConfirmedTrxCreator !== dbRecord.confirmedNFTTokenOwner ||
+    notConfirmedTrxCreator !== dbRecord.user
   ) {
     const error = new HttpError(
       'Transaction token creator does not match our records.',
@@ -636,7 +637,7 @@ const initMrr = async (req, res, next) => {
   // END NFTPACK END OWNERSHIP CALL TO NFT CONTRACT---------------------------------------------------------------------------------------------------------------------------
 
   // if confirmed nft token owner doesn't exist, return
-  if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
+  if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner === 0) {
     const error = new HttpError(
       'Unable to confirm NFT token ownership. Network error.',
       403
@@ -645,7 +646,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // check NFT token owner equals trx token owner
-  if (confirmedNFTTokenOwner != notConfirmedTrxCreator) {
+  if (confirmedNFTTokenOwner !== notConfirmedTrxCreator) {
     try {
       dbRecord.mintingError =
         'NFT token owner does not equal transaction creator.';
@@ -687,7 +688,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // if check to confirm pub token owner = unconfirmed trx creator
-  if (confirmedPubTokenCreator != notConfirmedTrxCreator) {
+  if (confirmedPubTokenCreator !== notConfirmedTrxCreator) {
     try {
       dbRecord.mintingError = 'Pub token creator does not equal trx creator.';
       dbRecord.pending = false;
@@ -707,7 +708,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // if check to confirm BAYC token owner = db confirmed token owner is the same owner when record was generated
-  if (confirmedNFTTokenOwner != dbRecord.confirmedNFTTokenOwner.toLowerCase()) {
+  if (confirmedNFTTokenOwner !== dbRecord.confirmedNFTTokenOwner.toLowerCase()) {
     try {
       dbRecord.mintingError =
         'NFT token owner does not equal record creator at time of minting.';
@@ -774,7 +775,7 @@ const initMrr = async (req, res, next) => {
       dbRecord.pending = true;
       dbRecord.mrrTrxError = 'Minting error occured at initMrr.';
       await dbRecord.save();
-    } catch (err) {
+    } catch (error) {
       throw new Error(
         'Failed updating database with mint error at initMrr.',
         err
@@ -833,9 +834,6 @@ const initMrr = async (req, res, next) => {
 
 // initRecord creates image and record in db, returns image to frontend
 const initRecord = async (req, res, next) => {
-  // pinata api auth
-  const pinata = pinataSDK(process.env.USER, process.env.API_KEY);
-
   // date generation and formatting
   const creationDate = new Date()
     .toLocaleString()
@@ -950,7 +948,7 @@ const initRecord = async (req, res, next) => {
   // END NFT OWNER CALL FILTER^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   // check if confirmedNFTTokenOwner exists
-  if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
+  if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner === 0) {
     const error = new HttpError(
       'Network error calling NFT project contract or you do not own tokens form this project.',
       424
@@ -962,17 +960,13 @@ const initRecord = async (req, res, next) => {
   const user = req.body.user.toLowerCase(); // unconfirmed user set to lower case
 
   // check if confirmed NFTTokenOwner matches unconfirmed user, return error if addresses do not match
-  if (confirmedNFTTokenOwner != user) {
+  if (confirmedNFTTokenOwner !== user) {
     const error = new HttpError('You do not own this NFT.', 403);
     return next(error);
   }
 
   // start image creation
   let NFTCID;
-  let textOne;
-  let textTwo;
-  let textThree;
-  let textFour;
   let record;
   let modeArray;
   let responseURI;
@@ -1045,14 +1039,16 @@ const initRecord = async (req, res, next) => {
       ></image>`;
 
     // word wrap helper function to format message in svg image
-    const msgChunks = wordWrap(req.body.message, 50);
-    textOne = msgChunks[0];
-    textTwo = msgChunks[1];
-    textThree = msgChunks[2];
-    textFour = msgChunks[3];
+    const [textOne, textTwo, textThree, textFour] = wordWrap(req.body.message, 50);
+    // textOne = msgChunks[0];
+    // textTwo = msgChunks[1];
+    // textThree = msgChunks[2];
+    // textFour = msgChunks[3];
 
     // svg image token id for provenance stack
-    const nftTokenId = req.body.nftTokenId;
+    const {
+      body: { nftTokenId },
+    } = req;
 
     // svg image keyword formatted
     const prKeyword = req.body.attrKeyword
@@ -1082,7 +1078,7 @@ const initRecord = async (req, res, next) => {
     };
 
     // START TEMPLATE FILTER----------------------------------------------------------------------------------------------------------------------
-    let ownerAddr = record.confirmedNFTTokenOwner;
+    const ownerAddr = record.confirmedNFTTokenOwner;
     try {
       modeArray = await Promise.all(
         BAYCMaster.map(async (template) => {
