@@ -1,3 +1,8 @@
+/* eslint-disable no-unsafe-finally */
+/* eslint-disable no-continue */
+/* eslint-disable new-cap */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable consistent-return */
 const Web3 = require('web3');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
@@ -24,12 +29,9 @@ exports.mintInterval = async () => {
 
   const hdWalletPolygon = new HDWalletProvider(mnemonic, alchemyURLPolygon);
 
-  const hdWalletEth = new HDWalletProvider(mnemonic, alchemyURLEth);
-
   // sleep function to slow down loop
-  const sleep = (milliseconds) => {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  };
+  const sleep = (milliseconds) =>
+    new Promise((resolve) => setTimeout(resolve, milliseconds));
 
   setInterval(async () => {
     console.log('mint interval fired');
@@ -52,11 +54,8 @@ exports.mintInterval = async () => {
         PublicRecordBuild.networks[networkIdPolygon].address
       );
     } catch (err) {
-      const error = new HttpError(
-        'Failed to connect to Polygon network at mint Interval.',
-        424
-      );
-      return next(error);
+      const error = 'Failed to connect to Polygon network at mint Interval.';
+      throw new Error(error);
     }
 
     // mirror contract polygon
@@ -72,8 +71,6 @@ exports.mintInterval = async () => {
     } catch (err) {
       throw new Error('Failed to retrieve records.', err);
     }
-
-    console.log('Found pending records:', dbRecord.length);
 
     // if no pending db records return out
     if (!dbRecord || dbRecord.length === 0) {
@@ -107,8 +104,8 @@ exports.mintInterval = async () => {
 
     const timeNow = Date.now();
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const record of dbRecord) {
-
       // if record is not pending return;
       if (record.pending === false) {
         console.log('Record pending status false in mint loop.');
@@ -130,7 +127,7 @@ exports.mintInterval = async () => {
       }
 
       // get dna from db record
-      const dna = record.dna;
+      const { dna } = record;
 
       // get prtokenID from dna to token ID mapping in pubcontract
       let prTokenId;
@@ -147,7 +144,7 @@ exports.mintInterval = async () => {
       }
 
       // if prtoken doesn't exist then return out without setting data to db
-      if (!prTokenId || prTokenId == 0) {
+      if (!prTokenId || prTokenId === 0) {
         console.log('prtokenId does not exist or equals:', prTokenId);
         continue;
       }
@@ -158,7 +155,7 @@ exports.mintInterval = async () => {
         prTokenId > 0 &&
         record.prTokenId &&
         record.prTokenId > 0 &&
-        prTokenId != record.prTokenId
+        prTokenId !== record.prTokenId
       ) {
         console.log('prTokenId db:', record.prTokenId);
         console.log('prTokenId contract:', prTokenId);
@@ -192,7 +189,7 @@ exports.mintInterval = async () => {
       console.log('mrrTokenId:', mrrTokenId);
 
       // if mrrTokenId exists and equals prTokenId, then mirror has already been minted dave to db prTokenId, mrrTokenId, pending false, mintcomplete true, continue;
-      if (mrrTokenId && mrrTokenId > 0 && mrrTokenId == prTokenId) {
+      if (mrrTokenId && mrrTokenId > 0 && mrrTokenId === prTokenId) {
         try {
           record.prTokenId = prTokenId;
           record.mrrTokenId = mrrTokenId;
@@ -209,7 +206,7 @@ exports.mintInterval = async () => {
       // owner Check cycle
       // if prTokenId exists at contract and mrrTokenID does not exist, get attrCreatorAddr from pubContract by prTokenId
       let confirmedPubTokenCreator; // guaranteed accurate, set to msg.sender in contract safemint function
-      if (prTokenId && (!mrrTokenId || mrrTokenId == 0)) {
+      if (prTokenId && (!mrrTokenId || mrrTokenId === 0)) {
         try {
           confirmedPubTokenCreator = await PubContract.methods
             .getAttrCreatorAddr(prTokenId)
@@ -251,11 +248,9 @@ exports.mintInterval = async () => {
             web3Eth = new createAlchemyWeb3(alchemyURLEth);
             baycContract = new web3Eth.eth.Contract(BAYCContract, baycAddr);
           } catch (err) {
-            const error = new HttpError(
-              'Failed to connect to BAYC contract on Ethereum network.',
-              424
-            );
-            return next(error);
+            const error =
+              'Failed to connect to BAYC contract on Ethereum network.';
+            throw new Error(error);
           }
 
           try {
@@ -275,7 +270,6 @@ exports.mintInterval = async () => {
         if (record.nftTokenType === 'TEST') {
           // change
           const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
-          let web3Polygon;
 
           // change
           let testContract;
@@ -326,17 +320,17 @@ exports.mintInterval = async () => {
         // END NFTPACK CONTRACT CALL^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         // if no supported tokens owned or pubToken user does not own any supported NFTs at time of interval
-        if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner == 0) {
+        if (!confirmedNFTTokenOwner || confirmedNFTTokenOwner === 0) {
           console.log('No supported NFT tokens owned.');
           continue;
         }
 
         // if pubTokenCreator does not equal nftOwnerAddr or db record creator, set pending status to false and set mint error status
         if (
-          confirmedPubTokenCreator != confirmedNFTTokenOwner ||
-          confirmedPubTokenCreator !=
+          confirmedPubTokenCreator !== confirmedNFTTokenOwner ||
+          confirmedPubTokenCreator !==
             record.confirmedNFTTokenOwner.toLowerCase() ||
-          confirmedNFTTokenOwner != record.confirmedNFTTokenOwner.toLowerCase()
+          confirmedNFTTokenOwner !== record.confirmedNFTTokenOwner.toLowerCase()
         ) {
           try {
             record.pending = false;
@@ -363,7 +357,7 @@ exports.mintInterval = async () => {
           console.log('in mint function');
 
           // prepend ipfs:// to image
-          const metadataImage = 'ipfs://' + record.image;
+          const metadataImage = `ipfs://${record.image}`;
 
           // sleep to slow down loop
           await sleep(10000);
@@ -429,6 +423,7 @@ exports.mintInterval = async () => {
               try {
                 record.mrrTrxHash = mrrTrx.transactionHash;
                 record.prTokenId = prTokenId;
+                // eslint-disable-next-line no-unneeded-ternary
                 record.mrrTokenId = mrrTokenIdFinal ? mrrTokenIdFinal : '';
                 record.pending = false;
                 record.mintingComplete = true;
