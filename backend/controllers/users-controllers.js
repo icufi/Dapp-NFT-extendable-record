@@ -1178,20 +1178,14 @@ const initRecord = async (req, res, next) => {
         transform='matrix(1 0 0 1 18 13.5)'
       ></image>`;
 
+    // user message
+    const [message] = req.body;
+
     // word wrap helper function to format message in svg image
-    const msgChunks = wordWrap(req.body.message, 50);
-    textOne = msgChunks[0];
-    textTwo = msgChunks[1];
-    textThree = msgChunks[2];
-    textFour = msgChunks[3];
+    const [textOne, textTwo, textThree, textFour] = wordWrap(message, 50);
 
     // svg image token id for provenance stack
-    const nftTokenId = req.body.nftTokenId;
-
-    // svg image keyword formatted
-    const prKeyword = req.body.attrKeyword
-      ? ` ${req.body.attrKeyword} =&gt;`
-      : '';
+    const { nftTokenId } = req.body;
 
     // build record object that will be saved to db
     record = {
@@ -1263,9 +1257,7 @@ const initRecord = async (req, res, next) => {
       fs.writeFileSync(__dirname + `/assets/init16.svg`, modeArray[0].svg);
       // fs.writeFileSync(__dirname + `/assets/init15.svg`, modeArray[0].svg);
 
-      record.modeDNA = modeArray.map(({ DNA }) => {
-        return DNA;
-      });
+      record.modeDNA = modeArray.map(({ DNA }) => DNA);
     } catch (err) {
       console.log(err);
       const error = new HttpError('Could not create image mode.', 503);
@@ -1341,7 +1333,6 @@ const initRecord = async (req, res, next) => {
       attrKeyword: record.attrKeyword,
       modeArray,
     });
-    return;
   } catch (err) {
     console.log(err);
     const error = new HttpError(
