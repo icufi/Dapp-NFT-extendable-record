@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const recordSchema = new Schema({
   nftTokenType: { type: String, required: true },
@@ -30,13 +31,13 @@ const recordSchema = new Schema({
   failedChecks: { type: String, required: false },
   mrrMintWhere: { type: String, required: false },
   modeDNA: [String],
-  textOne: {type: String, required: false},
-  textTwo: {type: String, required: false},
-  textThree: {type: String, required: false},
-  textFour: {type: String, required: false},
-  NFTCID: {type: String, required: false},
-  modeUsed: {type: String, required: false},
-  dna: {type: String, required: false}
+  textOne: { type: String, required: false },
+  textTwo: { type: String, required: false },
+  textThree: { type: String, required: false },
+  textFour: { type: String, required: false },
+  NFTCID: { type: String, required: false },
+  modeUsed: { type: String, required: false },
+  dna: { type: String, required: false },
 });
 
 module.exports = mongoose.model('Record', recordSchema);
