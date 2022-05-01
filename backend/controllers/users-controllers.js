@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-unneeded-ternary */
 const { validationResult } = require('express-validator');
 const axios = require('axios');
 const pinataSDK = require('@pinata/sdk');
@@ -52,7 +54,6 @@ const mrrQueue = async (req, res, next) => {
   let dbRecord;
   let svg;
   let pinnedImgHsh;
-  let confirmDNA;
   let contractDNA;
 
   // image creation variables
@@ -60,10 +61,10 @@ const mrrQueue = async (req, res, next) => {
   let image;
   let timeStampImage;
   let nftTokenId;
-  let prKeyword;
   let creationDate;
   let requestedMode;
   let modeIndex;
+  let responseImage;
 
   // get dbrecord by dna
   try {
@@ -152,15 +153,13 @@ const mrrQueue = async (req, res, next) => {
     const { textOne, textTwo, textThree, textFour } = record;
 
     console.log('textOne:', textOne);
+    console.log('textOne type of:', typeof textOne);
 
     // time stamp img embed
     timeStampImage = record.timeStampImage;
 
     // svg image token id for provenance stack
     nftTokenId = record.nftTokenId;
-
-    // svg image keyword formatted
-    prKeyword = record.attrKeyword ? ` ${record.attrKeyword} =&gt;` : '';
 
     // record creation date
     creationDate = record.prCreateDate;
@@ -264,7 +263,7 @@ const mrrQueue = async (req, res, next) => {
   // END IMAGE CREATION
 
   // get dna of image plus metadata to compare with dna created at init
-  confirmDNA = await Web3.utils.soliditySha3(
+  const confirmDNA = await Web3.utils.soliditySha3(
     { t: 'string', v: record.name },
     { t: 'string', v: record.description },
     { t: 'string', v: svg },
@@ -274,7 +273,6 @@ const mrrQueue = async (req, res, next) => {
     { t: 'string', v: record.attrKeyword }
   );
 
-  console.log('confirm DNA:', confirmDNA);
   // find dna by index in modeDNA array
   const DNAIndex = record.modeDNA.findIndex((DNA) => confirmDNA === DNA);
   console.log('dna index:', DNAIndex);
@@ -349,7 +347,6 @@ const mrrQueue = async (req, res, next) => {
 
   // format modeName
   modeName = modeNameFormat(modeName);
-  console.log('mode name formatted:', modeName);
 
   try {
     record.image = pinnedImgHsh;
@@ -423,10 +420,12 @@ const initMrr = async (req, res, next) => {
 
   // returned transaction data from client unconfirmed/untrusted
   const reportedTrxHash = req.body.trx.events[0].transactionHash;
-  const status = req.body.trx.status;
+  const {
+    trx: { status },
+  } = req.body;
 
   // if client transaction fails, return
-  if (!status || status == false) {
+  if (!status || status === false) {
     const error = new HttpError('Minting failed.', 424);
     return next(error);
   }
@@ -445,7 +444,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // if PrToken dna does not exist, return
-  if (!pubContractDNA || pubContractDNA == 0) {
+  if (!pubContractDNA || pubContractDNA === 0) {
     const error = new HttpError('Token DNA does not exist.', 403);
     return next(error);
   }
@@ -466,7 +465,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // if confirmed pubTokenCreator does not exist, return
-  if (!confirmedPubTokenCreator || confirmedPubTokenCreator == 0) {
+  if (!confirmedPubTokenCreator || confirmedPubTokenCreator === 0) {
     const error = new HttpError('Pub token does not exist.', 403);
     return next(error);
   }
@@ -478,11 +477,10 @@ const initMrr = async (req, res, next) => {
 
     console.log('pubContractDNA:', pubContractDNA);
 
-    if (!dbRecord || dbRecord.length != 1) {
+    if (!dbRecord || dbRecord.length !== 1) {
       throw new Error('Record is not unique or does not exist!');
     }
-    dbRecord = dbRecord[0];
-    console.log('dbRecord:', dbRecord);
+    dbRecord = [dbRecord];
   } catch (err) {
     const error = new HttpError('Failed to find a unique record!', 503);
     return next(error);
@@ -555,14 +553,11 @@ const initMrr = async (req, res, next) => {
     // BAYC web3 init Ethereum
     const baycAddr = '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D';
     let web3Eth;
-    let accountsEth;
-    let networkIdEth;
     let baycContract;
 
     // BAYC initialize contract
     try {
       web3Eth = createAlchemyWeb3(alchemyURLEth);
-      networkIdEth = await web3Eth.eth.net.getId();
       baycContract = new web3Eth.eth.Contract(BAYCContract, baycAddr);
     } catch (err) {
       throw new Error('Failed to connect to BAYC contract at alchem Eth.', err);
@@ -584,9 +579,6 @@ const initMrr = async (req, res, next) => {
   if (dbRecord.nftTokenType === 'TEST') {
     // BAYC web3 init Ethereum
     const testAddr = '0x52EA23F2fef28005bEf1DA54e971517C5863a1ad';
-    let web3Polygon;
-    let accountsEth;
-    let networkIdEth;
     let testContract;
 
     // BAYC initialize contract
@@ -654,7 +646,7 @@ const initMrr = async (req, res, next) => {
   }
 
   // if check to confirm BAYC token owner = onchain pub token owner
-  if (confirmedNFTTokenOwner != confirmedPubTokenCreator) {
+  if (confirmedNFTTokenOwner !== confirmedPubTokenCreator) {
     try {
       dbRecord.mintingError =
         'NFT token owner and pub token creator are not the same person.';
@@ -802,7 +794,6 @@ const initMrr = async (req, res, next) => {
         );
       } catch (err) {
         console.log(err);
-        throw new Error('Failed to save Mirror Trx Hash to DB.', 424);
       }
     }
 
@@ -1064,47 +1055,43 @@ const initRecord = async (req, res, next) => {
     const ownerAddr = record.confirmedNFTTokenOwner;
     try {
       modeArray = await Promise.all(
-        BAYCMaster.map(async (template) => {
-          return {
-            svg: template(
-              image,
-              textOne ? textOne : '',
-              textTwo ? textTwo : '',
-              textThree ? textThree : '',
-              textFour ? textFour : '',
-              ownerAddr,
-              nftTokenId,
-              timeStampImage,
-              creationDate
-            ),
-            modeName: template.name,
-            DNA: await Web3.utils.soliditySha3(
-              { t: 'string', v: record.name },
-              { t: 'string', v: record.description },
-              {
-                t: 'string',
-                v: template(
-                  image,
-                  textOne ? textOne : '',
-                  textTwo ? textTwo : '',
-                  textThree ? textThree : '',
-                  textFour ? textFour : '',
-                  ownerAddr,
-                  nftTokenId,
-                  timeStampImage,
-                  creationDate
-                ),
-              },
-              { t: 'string', v: record.message },
-              { t: 'string', v: record.prCreateDate },
-              { t: 'string', v: record.attrNFTName },
-              { t: 'string', v: record.attrKeyword }
-            ),
-          };
-        })
+        BAYCMaster.map((template) => ({
+          svg: template(
+            image,
+            textOne ? textOne : '',
+            textTwo ? textTwo : '',
+            textThree ? textThree : '',
+            textFour ? textFour : '',
+            ownerAddr,
+            nftTokenId,
+            timeStampImage,
+            creationDate
+          ),
+          modeName: template.name,
+          DNA: Web3.utils.soliditySha3(
+            { t: 'string', v: record.name },
+            { t: 'string', v: record.description },
+            {
+              t: 'string',
+              v: template(
+                image,
+                textOne ? textOne : '',
+                textTwo ? textTwo : '',
+                textThree ? textThree : '',
+                textFour ? textFour : '',
+                ownerAddr,
+                nftTokenId,
+                timeStampImage,
+                creationDate
+              ),
+            },
+            { t: 'string', v: record.message },
+            { t: 'string', v: record.prCreateDate },
+            { t: 'string', v: record.attrNFTName },
+            { t: 'string', v: record.attrKeyword }
+          ),
+        }))
       );
-
-      fs.writeFileSync(__dirname + `/assets/init16.svg`, modeArray[0].svg);
 
       record.modeDNA = modeArray.map(({ DNA }) => DNA);
     } catch (err) {
@@ -1201,48 +1188,43 @@ const initRecord = async (req, res, next) => {
     try {
       modeArray = await Promise.all(
         // change
-        TESTMaster.map(async (template) => {
-          return {
-            svg: template(
-              image,
-              textOne ? textOne : '',
-              textTwo ? textTwo : '',
-              textThree ? textThree : '',
-              textFour ? textFour : '',
-              ownerAddr,
-              nftTokenId,
-              timeStampImage,
-              creationDate
-            ),
-            modeName: template.name,
-            DNA: await Web3.utils.soliditySha3(
-              { t: 'string', v: record.name },
-              { t: 'string', v: record.description },
-              {
-                t: 'string',
-                v: template(
-                  image,
-                  textOne ? textOne : '',
-                  textTwo ? textTwo : '',
-                  textThree ? textThree : '',
-                  textFour ? textFour : '',
-                  ownerAddr,
-                  nftTokenId,
-                  timeStampImage,
-                  creationDate
-                ),
-              },
-              { t: 'string', v: record.message },
-              { t: 'string', v: record.prCreateDate },
-              { t: 'string', v: record.attrNFTName },
-              { t: 'string', v: record.attrKeyword }
-            ),
-          };
-        })
+        TESTMaster.map((template) => ({
+          svg: template(
+            image,
+            textOne ? textOne : '',
+            textTwo ? textTwo : '',
+            textThree ? textThree : '',
+            textFour ? textFour : '',
+            ownerAddr,
+            nftTokenId,
+            timeStampImage,
+            creationDate
+          ),
+          modeName: template.name,
+          DNA: Web3.utils.soliditySha3(
+            { t: 'string', v: record.name },
+            { t: 'string', v: record.description },
+            {
+              t: 'string',
+              v: template(
+                image,
+                textOne ? textOne : '',
+                textTwo ? textTwo : '',
+                textThree ? textThree : '',
+                textFour ? textFour : '',
+                ownerAddr,
+                nftTokenId,
+                timeStampImage,
+                creationDate
+              ),
+            },
+            { t: 'string', v: record.message },
+            { t: 'string', v: record.prCreateDate },
+            { t: 'string', v: record.attrNFTName },
+            { t: 'string', v: record.attrKeyword }
+          ),
+        }))
       );
-
-      fs.writeFileSync(__dirname + `/assets/init16.svg`, modeArray[0].svg);
-      // fs.writeFileSync(__dirname + `/assets/init15.svg`, modeArray[0].svg);
 
       record.modeDNA = modeArray.map(({ DNA }) => DNA);
     } catch (err) {
@@ -1358,7 +1340,6 @@ const suggestion = async (req, res, next) => {
 const sendMail = async (req, res, next) => {
   // user routes express-validator
   const errors = validationResult(req);
-  console.log(errors);
 
   // if validation errors, next
   if (!errors.isEmpty()) {
@@ -1383,7 +1364,7 @@ const sendMail = async (req, res, next) => {
   dbRecord = [dbRecord];
 
   // check user in dbRecord matches sendmail request user
-  if (dbRecord.user.toLowerCase() != req.body.userAddress.toLowerCase()) {
+  if (dbRecord.user.toLowerCase() !== req.body.userAddress.toLowerCase()) {
     throw new Error('User in db does not match user in mail send request.');
   }
 
