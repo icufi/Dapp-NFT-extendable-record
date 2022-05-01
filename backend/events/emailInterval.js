@@ -1,3 +1,5 @@
+/* eslint-disable no-continue */
+/* eslint-disable no-await-in-loop */
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 
@@ -33,19 +35,8 @@ exports.emailInterval = async () => {
     // loop through pending emails. send if valid.
     // eslint-disable-next-line no-restricted-syntax
     for (const email of emails) {
-      // exit if email is not pending.
-      if (email.emailPending === false) {
-        console.log('Email is not pending.');
-        continue;
-      }
-
       // slow down loop because deals with several network calls
-      sleep(5000);
-
-      if (email.emailCompleteTime) {
-        console.log('Email is already completed.');
-        continue;
-      }
+      sleep(2000);
 
       // if email pending longer than 24 hours, set pending to false, timeout to true
       const currentTime = Date.now();
@@ -96,7 +87,7 @@ exports.emailInterval = async () => {
       }
 
       // if prTokenId does not match mrrTokenId then mint of record was corrupt
-      if (dbRecord.mrrTokenId != dbRecord.prTokenId) {
+      if (dbRecord.mrrTokenId !== dbRecord.prTokenId) {
         console.log('Tokens do not match at record database.');
         continue;
       }
@@ -112,10 +103,6 @@ exports.emailInterval = async () => {
       };
 
       const mailer = nodemailer.createTransport(sgTransport(options));
-
-      console.log('email object in for loop:', email);
-
-      console.log('dbRecord mrrTokenId:', dbRecord.mrrTokenId);
 
       const { image, nftTokenType, nftTokenId, message, replyAddress } = email;
 
@@ -137,6 +124,7 @@ exports.emailInterval = async () => {
           async (err, res) => {
             if (err) {
               console.log('Email send failed.', err);
+              return;
             }
             console.log(res);
             try {
