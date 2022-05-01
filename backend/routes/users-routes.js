@@ -3,7 +3,6 @@ const { check } = require('express-validator');
 
 const usersController = require('../controllers/users-controllers');
 
-
 const router = express.Router();
 
 router.post(
@@ -18,9 +17,7 @@ router.post(
   usersController.initRecord
 );
 
-
 router.post('/mrrQueue', usersController.mrrQueue);
-
 
 router.post('/initMrr', usersController.initMrr);
 
