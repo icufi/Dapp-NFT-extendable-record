@@ -1,11 +1,10 @@
-export default emailTemplate = (
+const emailTemplate = (
   image,
   nftTokenType,
   nftTokenId,
   message,
   replyAddress
-) => {
-  return `<!doctype html>
+) => `<!doctype html>
 <html>
 
 <head>
@@ -173,4 +172,5 @@ export default emailTemplate = (
 </body>
 
 </html>`;
-};
+
+exports.emailTemplate = emailTemplate;
