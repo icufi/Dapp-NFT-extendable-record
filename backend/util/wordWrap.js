@@ -1,5 +1,6 @@
 function wordWrap(str, len) {
   const input = str.trim().split(' ');
+  // eslint-disable-next-line prefer-const
   let [index, output] = [0, []];
   output[index] = '';
   input.forEach((word) => {
