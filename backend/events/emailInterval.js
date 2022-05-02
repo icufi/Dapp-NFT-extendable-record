@@ -1,11 +1,9 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-await-in-loop */
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 
 const Email = require('../models/email');
 const Record = require('../models/record');
-const emailTemplate = require('../assets/email/emailTemplate');
+const emailTemplate = require('../assets/email/emailTemplate').default;
 
 const sleep = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));

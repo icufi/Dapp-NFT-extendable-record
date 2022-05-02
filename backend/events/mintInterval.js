@@ -1,11 +1,6 @@
-/* eslint-disable no-unsafe-finally */
-/* eslint-disable no-continue */
-/* eslint-disable new-cap */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable consistent-return */
 const Web3 = require('web3');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
+const { createAlchemyWeb3: CreateAlchemyWeb3 } = require('@alch/alchemy-web3');
 
 const Record = require('../models/record');
 
@@ -34,7 +29,6 @@ exports.mintInterval = async () => {
     new Promise((resolve) => setTimeout(resolve, milliseconds));
 
   setInterval(async () => {
-    console.log('mint interval fired');
     // Public Record contract web3 init Polygon
     let web3Polygon;
     let accountsPolygon;
@@ -42,7 +36,7 @@ exports.mintInterval = async () => {
     let PubContract;
 
     try {
-      web3Polygon = createAlchemyWeb3(alchemyURLPolygon, {
+      web3Polygon = new CreateAlchemyWeb3(alchemyURLPolygon, {
         writeProvider: hdWalletPolygon,
       });
 
@@ -245,7 +239,7 @@ exports.mintInterval = async () => {
 
           // initial BAYC contract
           try {
-            web3Eth = new createAlchemyWeb3(alchemyURLEth);
+            web3Eth = new CreateAlchemyWeb3(alchemyURLEth);
             baycContract = new web3Eth.eth.Contract(BAYCContract, baycAddr);
           } catch (err) {
             const error =
@@ -276,7 +270,7 @@ exports.mintInterval = async () => {
 
           // initiate TEST contract
           try {
-            web3Polygon = new createAlchemyWeb3(alchemyURLPolygon);
+            web3Polygon = new CreateAlchemyWeb3(alchemyURLPolygon);
 
             // change
             testContract = new web3Polygon.eth.Contract(

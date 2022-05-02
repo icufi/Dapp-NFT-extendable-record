@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-unneeded-ternary */
 const { validationResult } = require('express-validator');
 const axios = require('axios');
 const pinataSDK = require('@pinata/sdk');
