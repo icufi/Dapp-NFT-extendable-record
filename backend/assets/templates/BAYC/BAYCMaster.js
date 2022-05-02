@@ -20,15 +20,3 @@ module.exports = [
   BAYCpurplex836f6989,
   BAYCaquamarinex836f6989,
 ];
-
-
-BAYCaquamarinex836f6989;
-BAYCbluex836f6989;
-BAYCCREAMx836f6989;
-BAYCGreenwichx836f6989;
-BAYCgreyx836f6989;
-BAYCnewbluex836f6989;
-BAYCOG1PRBlackx836f6989;
-BAYCgreenmilx836f6989;
-BAYCpurplex836f6989;
-

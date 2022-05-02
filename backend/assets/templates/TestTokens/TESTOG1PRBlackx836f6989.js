@@ -1,4 +1,4 @@
-module.exports = TESTOG1PRBlackx836f6989 = (
+const TESTOG1PRBlackx836f6989 = (
   image,
   textOne,
   textTwo,
@@ -8,8 +8,7 @@ module.exports = TESTOG1PRBlackx836f6989 = (
   nftTokenId,
   timeStamp,
   creationDate
-) => {
-  return `<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 667 1296.4">
+) => `<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 667 1296.4">
   <defs>
     <style>
       .cls-962498 {
@@ -124,4 +123,5 @@ module.exports = TESTOG1PRBlackx836f6989 = (
   </g>
   <text id="Bored_Ape_Yacht_Club_Member" class="cls-11" transform="translate(500.22 667.06)">Member</text>
 </svg>`;
-};
+
+exports.TESTOG1PRBlackx836f6989 = TESTOG1PRBlackx836f6989;
