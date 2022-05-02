@@ -1,4 +1,4 @@
-module.exports = emailTemplate = (
+export default emailTemplate = (
   image,
   nftTokenType,
   nftTokenId,
