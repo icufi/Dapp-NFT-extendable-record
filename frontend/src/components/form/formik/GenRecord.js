@@ -15,8 +15,9 @@ import ModalSugProject from '../formik/ModalSugFeature';
 
 
 const INITIAL_FORM_STATE = {
-  // todo delete test inputs
+  // todo delete test input below
   nftTokenType: 'BAYC',
+  // todo delete test input below
   nftTokenId: '1',
   message: '',
   attrKeyword: '',

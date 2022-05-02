@@ -89,6 +89,8 @@ const mrrQueue = async (req, res, next) => {
   const user = req.body.user.toLowerCase();
   const recordUser = record.user.toLowerCase();
 
+  console.log(ownerAddr, user, recordUser)
+
   // ownership check
   if (ownerAddr !== user || recordUser !== user) {
     const error = new HttpError(
@@ -936,6 +938,10 @@ const initRecord = async (req, res, next) => {
 
   // current client user address
   const user = req.body.user.toLowerCase(); // unconfirmed user set to lower case
+
+  // todo test variable delete below
+  confirmedNFTTokenOwner = '0x83a9917294d46D411BaF4e3b213f506CaCaa0ce8';
+  confirmedNFTTokenOwner = confirmedNFTTokenOwner.toLowerCase();
 
   // check if confirmed NFTTokenOwner matches unconfirmed user, return error if addresses do not match
   if (confirmedNFTTokenOwner !== user) {

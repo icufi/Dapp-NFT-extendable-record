@@ -5,7 +5,7 @@ import { makeStyles } from '@mui/styles';
 import SVG from 'react-inlinesvg';
 
 import { AuthContext } from '../shared/context/auth-context';
-import PublicRecordBuild from '../assets/contracts/VisibleModes.json';
+import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
@@ -44,8 +44,6 @@ const MintRecord = ({ record }) => {
   const [alertNoToken, setAlertNoToken] = useState(false);
   const [openBTTokenModal, setOpenBTTokenModal] = useState(false);
   const [responseMintObject, setResponseMintObject] = useState('');
-
-  console.log('mode array:', record.modeArray);
 
   const classes = useStyles();
 
@@ -90,11 +88,13 @@ const MintRecord = ({ record }) => {
     const modeName = mode.modeName;
     const web3 = new Web3(auth.provider);
     const networkId = await web3.eth.net.getId();
-    const PubMint = new web3.eth.Contract(
-      PublicRecordBuild.abi,
-      PublicRecordBuild.networks[networkId].address
+    console.log('networkId:', networkId)
+    const ModesMint = new web3.eth.Contract(
+      VisibleModesBuild.abi,
+      VisibleModesBuild.networks[networkId].address
     );
-    const value = 6;
+    // todo test value variable
+    const value = .005;
     const payment = web3.utils.toWei(value.toString(), 'ether');
 
     // mint record
@@ -104,9 +104,7 @@ const MintRecord = ({ record }) => {
       JSON.stringify({
         modeDNA,
         modeName,
-        // todo test user value added here
-        user: '0x46EFbAedc92067E6d60E84ED6395099723252496',
-        // user: auth.currentAccount
+        user: auth.currentAccount
       }),
       {
         'Content-Type': 'application/json',
@@ -118,8 +116,8 @@ const MintRecord = ({ record }) => {
           setOpenEmailModal(true);
         }, 4000);
         setResponseMintObject(responseMintObject);
-        return PubMint.methods
-          .mintForAddress(
+        return ModesMint.methods
+          .safeMint(
             responseMintObject.name,
             responseMintObject.description,
             'ipfs://' + responseMintObject.image,
@@ -133,8 +131,7 @@ const MintRecord = ({ record }) => {
           )
           .send({
             // todo reinstate auth.provider.selectedAddress changed for testing
-            from: '0x46EFbAedc92067E6d60E84ED6395099723252496',
-            // from: auth.provider.selectedAddress,
+            from: auth.provider.selectedAddress,
             value: payment,
           });
       })

@@ -49,11 +49,7 @@ const ValueProp = (props) => {
         `${process.env.REACT_APP_BACKEND_URL}/users/initRecord`,
         'POST',
         JSON.stringify({
-          // todo delete test user below and uncomment selectedAddress for production
-          user: '0x46EFbAedc92067E6d60E84ED6395099723252496',
-
-          // user: auth.provider.selectedAddress,
-
+          user: auth.provider.selectedAddress,
           nftTokenType: event.nftTokenType,
           nftTokenId: event.nftTokenId,
           message: event.message,
