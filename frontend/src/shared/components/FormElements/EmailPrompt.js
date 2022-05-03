@@ -7,7 +7,7 @@ function EmailPrompt({ record, theme, descriptionElementRef }) {
       id='scroll-dialog-description'
       ref={descriptionElementRef}
       tabIndex={-1}
-      sx={{ mb: theme.spacing(2), mt: theme.spacing(4) }}
+      sx={{ ml: theme.spacing(3), mb: theme.spacing(2), mt: theme.spacing(4) }}
     >
       Send an email from your{' '}
       {record.attrNFTName.substring(0, record.attrNFTName.length - 13)}.
