@@ -70,10 +70,6 @@ const MintRecord = ({ record }) => {
 
   const { sendRequest, error, clearError } = useHttpClient();
 
-  console.log('auth.bttokencheck:', auth.BTTokenCheck);
-  console.log('alert no token:', alertNoToken);
-  console.log('tokenOwner:', tokenOwner);
-
   useEffect(() => {
     if (tokenOwner === false && auth.BTTokenCheck === false) {
       setAlertNoToken(true);
@@ -88,7 +84,6 @@ const MintRecord = ({ record }) => {
     const modeName = mode.modeName;
     const web3 = new Web3(auth.provider);
     const networkId = await web3.eth.net.getId();
-    console.log('networkId:', networkId)
     const ModesMint = new web3.eth.Contract(
       VisibleModesBuild.abi,
       VisibleModesBuild.networks[networkId].address
@@ -136,7 +131,6 @@ const MintRecord = ({ record }) => {
           });
       })
       .then((trx) => {
-        console.log(trx);
         return sendRequest(
           // eslint-disable-next-line no-undef
           `${process.env.REACT_APP_BACKEND_URL}/users/initMrr`,
@@ -148,11 +142,9 @@ const MintRecord = ({ record }) => {
         );
       })
       .then((response) => {
-        console.log(response);
         setMrrReceipt(response);
       })
       .catch((err) => {
-        console.log(err);
         setErr(err);
       });
   };
