@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 
 import { AuthContext } from '../../context/auth-context';
 import ScrollToTop from '../util/ScrollToTop';
@@ -21,25 +23,15 @@ export default function DialogEmailTrx({
   ...props
 }) {
   const auth = useContext(AuthContext);
-  const [timer, setTimer] = useState(false);
   const [response, setResponse] = useState('');
   const [emailSent, setEmailSent] = useState('');
 
-  const scroll = 'body';
 
   ScrollToTop();
 
   const descriptionElementRef = React.useRef(null);
-  // React.useEffect(() => {
-  //   if (open) {
-  //     const { current: descriptionElement } = descriptionElementRef;
-  //     if (descriptionElement !== null) {
-  //       descriptionElement.focus();
-  //     }
-  //   }
-  // }, []);
 
-  const { sendRequest, isLoading, error } = useHttpClient();
+  const { sendRequest, isLoading, errorHTTP } = useHttpClient();
 
   const submitEmailHandler = async (event) => {
     auth.detect();
@@ -85,25 +77,33 @@ export default function DialogEmailTrx({
         aria-describedby='scroll-dialog-description'
       >
         <Box sx={{ width: '500px' }}>
-          <DialogContent dividers={scroll === 'paper'}>
+          <DialogContent dividers={'body' === 'paper'}>
             <EmailDialog
               receipt={receipt}
               err={err}
-              timer={timer}
               record={record}
               theme={theme}
-              descriptionElementRef={descriptionElementRef}
             />
-            <EmailForm
+            {!err && (
+              <EmailForm
                 submitEmailHandler={submitEmailHandler}
-                error={error}
+                errorHTTP={errorHTTP}
                 isLoading={isLoading}
                 response={response}
                 emailSent={emailSent}
                 record={record}
                 err={err}
+                theme={theme}
+                descriptionElementRef={descriptionElementRef}
                 {...props}
               />
+            )}
+
+            {err && (
+              <Grid container justifyContent='flex-end'>
+                <Button onClick={props.onClose}>Close</Button>
+              </Grid>
+            )}
           </DialogContent>
         </Box>
       </Dialog>
