@@ -1352,6 +1352,8 @@ const sendMail = async (req, res, next) => {
   // user routes express-validator
   const errors = validationResult(req);
 
+  console.log(req.body);
+
   // if validation errors, next
   if (!errors.isEmpty()) {
     const error = new HttpError('Invalid inputs passed.', 422);
