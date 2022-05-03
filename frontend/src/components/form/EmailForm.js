@@ -7,6 +7,7 @@ import * as Yup from 'yup'
 import TextFieldFormik from './formik/components/TextField'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import ButtonFormik from './formik/components/ButtonFormik'
+import EmailPrompt from '../../shared/components/FormElements/EmailPrompt'
 
 const INITIAL_FORM_STATE = {
   emailFrom: '',
@@ -37,94 +38,103 @@ const FORM_VALIDATION_SCHEMA = Yup.object().shape({
 
 
 
-const EmailForm = ({record, response, isLoading, err, error, emailSent, ...props}) => {
+const EmailForm = ({record, response, isLoading, err, errorHTTP, emailSent, theme, descriptionElementRef, ...props}) => {
 
   return (
-    <Formik
-      initialValues={{ ...INITIAL_FORM_STATE }}
-      validationSchema={FORM_VALIDATION_SCHEMA}
-      onSubmit={props.submitEmailHandler}
-    >
-      <Form>
-        <Grid container spacing={2}>
-          {!response && !error && (
-            <React.Fragment>
-              <Grid item xs={6}>
-                <Box sx={{ fontSize: '12px' }}>email address from</Box>
-                <TextFieldFormik
-                  name='emailFrom'
-                  label={`ex:  ${record.nftTokenType}${record.nftTokenId}`}
-                />
+    <>
+      {!err && (
+        <EmailPrompt
+          theme={theme}
+          record={record}
+          descriptionElementRef={descriptionElementRef}
+        />
+      )}
+      <Formik
+        initialValues={{ ...INITIAL_FORM_STATE }}
+        validationSchema={FORM_VALIDATION_SCHEMA}
+        onSubmit={props.submitEmailHandler}
+      >
+        <Form>
+          <Grid container spacing={2}>
+            {!response && !errorHTTP && (
+              <React.Fragment>
+                <Grid item xs={6}>
+                  <Box sx={{ fontSize: '12px' }}>email address from</Box>
+                  <TextFieldFormik
+                    name='emailFrom'
+                    label={`ex:  ${record.nftTokenType}${record.nftTokenId}`}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <Box
+                    sx={{
+                      color: '#808080',
+                      pt: '43px',
+                      fontSize: { xs: '16px', md: '34px' },
+                    }}
+                  >
+                    @visible.love
+                  </Box>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box sx={{ fontSize: '12px' }}>email address to</Box>
+                  <TextFieldFormik name='emailTo' label={`recipient`} />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Box sx={{ fontSize: '12px' }}>email address reply</Box>
+                  <TextFieldFormik
+                    name='emailReply'
+                    label='Your real email address (optional)'
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextFieldFormik name='subject' label='Subject (optional)' />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextFieldFormik
+                    name='message'
+                    label='Message (optional)'
+                    multiline={true}
+                    rows={8}
+                  />
+                </Grid>
+              </React.Fragment>
+            )}
+            {isLoading && (
+              <Grid>
+                <LoadingSpinner />
               </Grid>
-              <Grid item xs={6}>
-                <Box
-                  sx={{
-                    color: '#808080',
-                    pt: '43px',
-                    fontSize: { xs: '16px', md: '34px' },
-                  }}
+            )}
+            {response && (
+              <Grid sx={{ width: '600px' }} item>
+                <Typography>{response.msg}</Typography>
+              </Grid>
+            )}
+          </Grid>
+          <DialogActions>
+            {!response && !err && (
+              <React.Fragment>
+                <Button onClick={props.onClose}>Close</Button>
+                <ButtonFormik
+                  err={err ? true : false}
+                  email
+                  onClick={() => props.onSubmitHandler()}
+                  response={response ? true : false}
+                  emailSent={emailSent ? true : false}
                 >
-                  @visible.love
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Box sx={{ fontSize: '12px' }}>email address to</Box>
-                <TextFieldFormik name='emailTo' label={`recipient`} />
-              </Grid>
-
-              <Grid item xs={12}>
-                <Box sx={{ fontSize: '12px' }}>email address reply</Box>
-                <TextFieldFormik
-                  name='emailReply'
-                  label='Your real email address (optional)'
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextFieldFormik name='subject' label='Subject (optional)' />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextFieldFormik
-                  name='message'
-                  label='Message (optional)'
-                  multiline={true}
-                  rows={8}
-                />
-              </Grid>
-            </React.Fragment>
-          )}
-          {isLoading && (
-            <Grid>
-              <LoadingSpinner />
-            </Grid>
-          )}
-          {response && (
-            <Grid sx={{ width: '600px' }} item>
-              <Typography>{response.msg}</Typography>
-            </Grid>
-          )}
-        </Grid>
-        <DialogActions>
-          {!response && !err && (
-            <React.Fragment>
-              <Button onClick={props.onClose}>Close</Button>
-              <ButtonFormik
-                err={err ? true : false}
-                email
-                onClick={() => props.onSubmitHandler()}
-                response={response ? true : false}
-                emailSent={emailSent ? true : false}
-              >
-                Send
-              </ButtonFormik>
-            </React.Fragment>
-          )}
-          {response && <Button onClick={props.onClose}>Close</Button>}
-          {err && !response && <Button onClick={props.onClose}>Close</Button>}
-        </DialogActions>
-      </Form>
-    </Formik>
+                  Send
+                </ButtonFormik>
+              </React.Fragment>
+            )}
+            {response && <Button onClick={props.onClose}>Close</Button>}
+            {err && !response && <Button onClick={props.onClose}>Close</Button>}
+          </DialogActions>
+        </Form>
+      </Formik>
+    </>
   );
 }
 
