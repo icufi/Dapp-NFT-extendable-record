@@ -2,10 +2,12 @@ import React from 'react'
 import {DialogTitle} from '@mui/material'
 
 
-function PendingComplete({receipt}) {
+function PendingComplete({receipt, err}) {
   return (
     <div>
-      {receipt ? (
+      {err ? (<DialogTitle xs={6} id='scroll-dialog-title'>
+          Your mint has failed.
+        </DialogTitle>) : receipt ? (
         <DialogTitle xs={6} id='scroll-dialog-title'>
           Your mint is complete.
         </DialogTitle>
