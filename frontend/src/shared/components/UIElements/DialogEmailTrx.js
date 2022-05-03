@@ -243,7 +243,7 @@ export default function DialogEmailTrx({
                             fontSize: { xs: '16px', md: '34px' },
                           }}
                         >
-                          @publicrecord.cc
+                          @visible.love
                         </Box>
                       </Grid>
                       <Grid item xs={12}>
