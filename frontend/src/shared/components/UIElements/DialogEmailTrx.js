@@ -25,8 +25,8 @@ const INITIAL_FORM_STATE = {
   emailFrom: '',
   emailTo: '',
   subject: '',
-  // emailReply: '',
-  // message: '',
+  emailReply: '',
+  message: '',
 };
 
 const FORM_VALIDATION_SCHEMA = Yup.object().shape({
@@ -129,9 +129,15 @@ export default function DialogEmailTrx({
         aria-describedby='scroll-dialog-description'
       >
         <Box sx={{ width: '500px' }}>
-          <DialogTitle xs={6} id='scroll-dialog-title'>
-            Your mint is pending...
-          </DialogTitle>
+          {receipt ? (
+            <DialogTitle xs={6} id='scroll-dialog-title'>
+              Your mint is complete.
+            </DialogTitle>
+          ) : (
+            <DialogTitle xs={6} id='scroll-dialog-title'>
+              Your mint is pending...
+            </DialogTitle>
+          )}
 
           {timer === true && !err && !receipt && (
             <Box
@@ -180,14 +186,11 @@ export default function DialogEmailTrx({
               <Typography
                 sx={{ mt: theme.spacing(3), padding: theme.spacing(2) }}
               >
-                We recommend using 'aggressive' gas fees in Metamask and keeping
-                this dialog box open until you receive a 'success' message.
+                Keep this dialog box open until you receive a
+                transaction 'success' or 'error' message.
               </Typography>
             </Box>
           )}
-          <DialogActions>
-            <Button onClick={props.onClose}>Close</Button>
-          </DialogActions>
           <DialogContent dividers={scroll === 'paper'}>
             {!err && !receipt && !response && (
               <DialogContentText
@@ -196,7 +199,7 @@ export default function DialogEmailTrx({
                 tabIndex={-1}
                 sx={{ mb: theme.spacing(4) }}
               >
-                Send an email from{' '}
+                Send an email from your{' '}
                 {record.attrNFTName.substring(
                   0,
                   record.attrNFTName.length - 13
@@ -204,19 +207,18 @@ export default function DialogEmailTrx({
                 while you wait.
               </DialogContentText>
             )}
-            {receipt && !response && (
+            {receipt && response && (
               <DialogContentText
                 id='scroll-dialog-description'
                 ref={descriptionElementRef}
                 tabIndex={-1}
                 sx={{ mb: theme.spacing(4) }}
               >
-                Send an email from{' '}
+                Send an email from your{' '}
                 {record.attrNFTName.substring(
                   0,
                   record.attrNFTName.length - 13
-                )}{' '}
-                now.
+                )}{' '}.
               </DialogContentText>
             )}
             <Formik
@@ -287,7 +289,7 @@ export default function DialogEmailTrx({
                     </Grid>
                   )}
                 </Grid>
-                {!err && (
+                {!err && !response && (
                   <Grid item xs={12}>
                     <Box
                       sx={{
