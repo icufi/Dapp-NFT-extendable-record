@@ -29,12 +29,6 @@ export default function DialogEmailTrx({
 
   ScrollToTop();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setTimer(true);
-    }, 600000);
-  }, []);
-
   const descriptionElementRef = React.useRef(null);
   // React.useEffect(() => {
   //   if (open) {
@@ -91,24 +85,25 @@ export default function DialogEmailTrx({
         aria-describedby='scroll-dialog-description'
       >
         <Box sx={{ width: '500px' }}>
-          <EmailDialog
-            receipt={receipt}
-            err={err}
-            timer={timer}
-            record={record}
-            theme={theme}
-            descriptionElementRef={descriptionElementRef}
-          />
           <DialogContent dividers={scroll === 'paper'}>
-            {timer && (
-              <EmailForm
+            <EmailDialog
+              receipt={receipt}
+              err={err}
+              timer={timer}
+              record={record}
+              theme={theme}
+              descriptionElementRef={descriptionElementRef}
+            />
+            <EmailForm
                 submitEmailHandler={submitEmailHandler}
                 error={error}
                 isLoading={isLoading}
                 response={response}
                 emailSent={emailSent}
+                record={record}
+                err={err}
+                {...props}
               />
-            )}
           </DialogContent>
         </Box>
       </Dialog>
