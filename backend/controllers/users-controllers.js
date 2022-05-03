@@ -1372,7 +1372,7 @@ const sendMail = async (req, res, next) => {
   }
 
   // get object out of array
-  dbRecord = [dbRecord];
+  [dbRecord] = dbRecord;
 
   // check user in dbRecord matches sendmail request user
   if (dbRecord.user.toLowerCase() !== req.body.userAddress.toLowerCase()) {
