@@ -39,7 +39,6 @@ const FORM_VALIDATION_SCHEMA = Yup.object().shape({
 
 const EmailForm = ({record, response, isLoading, err, error, emailSent, ...props}) => {
 
-
   return (
     <Formik
       initialValues={{ ...INITIAL_FORM_STATE }}
