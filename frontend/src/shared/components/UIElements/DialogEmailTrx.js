@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { Formik, Form } from 'formik';
+import { Typography } from '@mui/material';
 import * as Yup from 'yup';
 
 import TextFieldFormik from '../../../components/form/formik/components/TextField';
@@ -17,9 +18,12 @@ import { AuthContext } from '../../context/auth-context';
 import LoadingSpinner from './LoadingSpinner';
 import ScrollToTop from '../util/ScrollToTop';
 import { useHttpClient } from '../../hooks/http-hook';
+import Success from '../FormElements/Success';
+import TrxError from '../FormElements/TrxError';
+import TimeoutDialog from '../FormElements/TimeoutDialog';
+import TrxSpinner from '../FormElements/TrxSpinner';
 
 import theme from '../../../Styles';
-import { Typography } from '@mui/material';
 
 const INITIAL_FORM_STATE = {
   emailFrom: '',
@@ -60,7 +64,6 @@ export default function DialogEmailTrx({
   const [timer, setTimer] = useState(false);
   const [response, setResponse] = useState('');
   const [emailSent, setEmailSent] = useState('');
-  const [open, setOpen] = useState(false)
 
   const scroll = 'body';
 
@@ -73,14 +76,14 @@ export default function DialogEmailTrx({
   }, []);
 
   const descriptionElementRef = React.useRef(null);
-  React.useEffect(() => {
-    if (open) {
-      const { current: descriptionElement } = descriptionElementRef;
-      if (descriptionElement !== null) {
-        descriptionElement.focus();
-      }
-    }
-  }, [open]);
+  // React.useEffect(() => {
+  //   if (open) {
+  //     const { current: descriptionElement } = descriptionElementRef;
+  //     if (descriptionElement !== null) {
+  //       descriptionElement.focus();
+  //     }
+  //   }
+  // }, []);
 
   const { sendRequest, isLoading, error } = useHttpClient();
 
@@ -139,58 +142,10 @@ export default function DialogEmailTrx({
             </DialogTitle>
           )}
 
-          {timer === true && !err && !receipt && (
-            <Box
-              sx={{
-                ml: theme.spacing(3),
-                mt: theme.spacing(1),
-                color: 'green',
-              }}
-            >
-              Timeout. This may be do to a network issue. If you have
-              successfully minted a record, our system will automatically
-              publish it. No further action required.
-            </Box>
-          )}
-          {receipt && (
-            <Box
-              sx={{
-                ml: theme.spacing(3),
-                mt: theme.spacing(1),
-                color: 'green',
-              }}
-            >
-              Success! {record.nftTokenType} #{record.nftTokenId}'s new record
-              is on-chain and unalterable.
-            </Box>
-          )}
-          {err && (
-            <Box
-              sx={{
-                mr: theme.spacing(3),
-                ml: theme.spacing(3),
-                mt: theme.spacing(1),
-                color: 'red',
-              }}
-            >
-              Error: {err.message}
-            </Box>
-          )}
-          {!receipt && timer === false && !err && (
-            <Box
-              sx={{ mt: theme.spacing(2), pb: theme.spacing(2) }}
-              xs={12}
-              textAlign='center'
-            >
-              <LoadingSpinner />
-              <Typography
-                sx={{ mt: theme.spacing(3), padding: theme.spacing(2) }}
-              >
-                Keep this dialog box open until you receive a
-                transaction 'success' or 'error' message.
-              </Typography>
-            </Box>
-          )}
+          {timer === true && !err && !receipt && <TimeoutDialog theme={theme} />}
+          {receipt && <Success record={record} theme={theme} />}
+          {err && <TrxError err={err} theme={theme} />}
+          {!receipt && timer === false && !err && <TrxSpinner theme={theme}/>}
           <DialogContent dividers={scroll === 'paper'}>
             {!err && !receipt && !response && (
               <DialogContentText
@@ -289,19 +244,6 @@ export default function DialogEmailTrx({
                     </Grid>
                   )}
                 </Grid>
-                {!err && !response && (
-                  <Grid item xs={12}>
-                    <Box
-                      sx={{
-                        color: 'blue',
-                        fontSize: '16px',
-                      }}
-                    >
-                      {record.nftTokenType} {record.nftTokenId}'s new public
-                      record will be included in the email body.
-                    </Box>
-                  </Grid>
-                )}
                 <DialogActions>
                   {!response && !err && (
                     <React.Fragment>
