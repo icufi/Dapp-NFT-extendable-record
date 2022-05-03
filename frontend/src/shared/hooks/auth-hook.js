@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react';
-
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
 import Web3 from 'web3';
 import detectProvider from '@metamask/detect-provider';
@@ -11,7 +10,6 @@ export const useAuth = () => {
   const [provider, setProvider] = useState('');
   const [currentAccount, setCurrentAccount] = useState('');
   const [chainId, setChainId] = useState('');
-
 
   const detect = useCallback(async () => {
     const provider = await detectProvider();
@@ -25,8 +23,6 @@ export const useAuth = () => {
       setCurrentAccount(userAddress);
     }
   }, []);
-
-
 
   useEffect(() => {
     if (window.ethereum) {
@@ -42,7 +38,6 @@ export const useAuth = () => {
   useEffect(() => {
     if (currentAccount) {
       if (chainId === 1) {
-        // eslint-disable-next-line no-undef
         const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
         const alchemy = async () => {
           if (chainId === 1) {
@@ -77,8 +72,6 @@ export const useAuth = () => {
             if (BTTokensOwned && BTTokensOwned >= 1) {
               setBTTokenCheck(true);
             }
-
-            console.log('bttokens owned ETH:', BTTokensOwned);
           }
         };
         alchemy();
@@ -114,8 +107,6 @@ export const useAuth = () => {
           if (BTTokensOwned && BTTokensOwned >= 1) {
             setBTTokenCheck(true);
           }
-
-          console.log('bttokens owned Polygon:', BTTokensOwned);
         };
         initBTTokenCheckPolygon();
       }
@@ -150,8 +141,6 @@ export const useAuth = () => {
           if (BTTokensOwned && BTTokensOwned >= 1) {
             setBTTokenCheck(true);
           }
-
-          console.log('bttokens owned Mumbai:', BTTokensOwned);
         };
         initBTTokenCheckMumbai();
       }
