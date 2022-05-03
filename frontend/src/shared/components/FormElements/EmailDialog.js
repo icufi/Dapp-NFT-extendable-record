@@ -12,7 +12,6 @@ const EmailDialog = ({
   err,
   record,
   theme,
-  descriptionElementRef,
 }) => {
   const [timer, setTimer] = useState(false);
 
@@ -24,16 +23,11 @@ const EmailDialog = ({
 
   return (
     <>
-      <PendingComplete receipt={receipt} />
+      <PendingComplete err={err} receipt={receipt} />
       {timer && !err && !receipt && <TimeoutDialog theme={theme} />}
       {receipt && <Success record={record} theme={theme} />}
       {err && <TrxError err={err} theme={theme} />}
       {!receipt && !timer && !err && <TrxSpinner theme={theme} />}
-      {!err && <EmailPrompt
-        theme={theme}
-        record={record}
-        descriptionElementRef={descriptionElementRef}
-      />}
     </>
   );
 };
