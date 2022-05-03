@@ -404,6 +404,7 @@ const initMrr = async (req, res, next) => {
     });
     accountsPolygon = await web3Polygon.eth.getAccounts();
     networkIdPolygon = await web3Polygon.eth.net.getId();
+    console.log('networkIdPolygon:', networkIdPolygon)
     PubContract = new web3Polygon.eth.Contract(
       PublicRecordBuild.abi,
       PublicRecordBuild.networks[networkIdPolygon].address
@@ -433,15 +434,18 @@ const initMrr = async (req, res, next) => {
   // get token dna from pubcontract based on reported trx prTokenId
   const notConfirmedPubTokenId =
     req.body.trx.events.Transfer.returnValues.tokenId;
+
   let pubContractDNA;
   try {
     pubContractDNA = await PubContract.methods
       .DNA(notConfirmedPubTokenId)
-      .call({ from: accountsPolygon[0] });
+      .call({ from: accountsPolygon[1] });
   } catch (err) {
     const error = new HttpError('Network error. PubContract DNA failed.', 424);
     return next(error);
   }
+
+  console.log('pubcontractDNA:', pubContractDNA)
 
   // if PrToken dna does not exist, return
   if (!pubContractDNA || pubContractDNA === 0) {
@@ -454,7 +458,7 @@ const initMrr = async (req, res, next) => {
   try {
     confirmedPubTokenCreator = await PubContract.methods
       .getAttrCreatorAddr(notConfirmedPubTokenId)
-      .call({ from: accountsPolygon[0] });
+      .call({ from: accountsPolygon[1] });
     confirmedPubTokenCreator = confirmedPubTokenCreator.toLowerCase(); // lower case address
   } catch (err) {
     const error = new HttpError(
@@ -474,13 +478,10 @@ const initMrr = async (req, res, next) => {
   let dbRecord;
   try {
     dbRecord = await Record.find({ dna: pubContractDNA });
-
-    console.log('pubContractDNA:', pubContractDNA);
-
     if (!dbRecord || dbRecord.length !== 1) {
       throw new Error('Record is not unique or does not exist!');
     }
-    dbRecord = [dbRecord];
+    [dbRecord] = dbRecord;
   } catch (err) {
     const error = new HttpError('Failed to find a unique record!', 503);
     return next(error);
@@ -623,6 +624,12 @@ const initMrr = async (req, res, next) => {
     );
     return next(error);
   }
+
+  // todo test variable
+  const testTokenOwner = '0x83a9917294d46D411BaF4e3b213f506CaCaa0ce8';
+  confirmedNFTTokenOwner = testTokenOwner.toLowerCase();
+
+  console.log(confirmedNFTTokenOwner, notConfirmedTrxCreator)
 
   // check NFT token owner equals trx token owner
   if (confirmedNFTTokenOwner !== notConfirmedTrxCreator) {
