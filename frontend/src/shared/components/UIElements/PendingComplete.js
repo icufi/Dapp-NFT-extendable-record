@@ -1,0 +1,21 @@
+import React from 'react'
+import {DialogTitle} from '@mui/material'
+
+
+function PendingComplete({receipt}) {
+  return (
+    <div>
+      {receipt ? (
+        <DialogTitle xs={6} id='scroll-dialog-title'>
+          Your mint is complete.
+        </DialogTitle>
+      ) : (
+        <DialogTitle xs={6} id='scroll-dialog-title'>
+          Your mint is pending...
+        </DialogTitle>
+      )}
+    </div>
+  );
+}
+
+export default PendingComplete
