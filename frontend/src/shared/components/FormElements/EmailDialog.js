@@ -5,7 +5,6 @@ import TimeoutDialog from './TimeoutDialog';
 import Success from './Success';
 import TrxError from './TrxError';
 import TrxSpinner from './TrxSpinner';
-import EmailPrompt from './EmailPrompt';
 
 const EmailDialog = ({
   receipt,
