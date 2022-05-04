@@ -1,20 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Web3 from 'web3';
-import { Grid, Button, Box, Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import SVG from 'react-inlinesvg';
 
 import { AuthContext } from '../shared/context/auth-context';
 import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
-import DialogEmailTrx from '../shared/components/UIElements/DialogEmailTrx';
 import ModalBTBuyNested from '../components/form/formik/ModalBTBuyNested';
 import AlertConnectPolygon from '../components/alerts/AlertConnectPolygon';
 import ErrorModal from '../shared/components/UIElements/ErrorModal';
 
-import theme from '../Styles';
+import ModeTrx from '../shared/components/UIElements/ModeTrx';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,7 +68,7 @@ const MintRecord = ({ record }) => {
   const { sendRequest, error, clearError } = useHttpClient();
 
   useEffect(() => {
-    if (tokenOwner === false && auth.BTTokenCheck === false) {
+    if (!tokenOwner && !auth.BTTokenCheck) {
       setAlertNoToken(true);
     } else {
       setAlertNoToken(false);
@@ -89,7 +86,7 @@ const MintRecord = ({ record }) => {
       VisibleModesBuild.networks[networkId].address
     );
     // todo test value variable
-    const value = .005;
+    const value = 0.005;
     const payment = web3.utils.toWei(value.toString(), 'ether');
 
     // mint record
@@ -99,7 +96,7 @@ const MintRecord = ({ record }) => {
       JSON.stringify({
         modeDNA,
         modeName,
-        user: auth.currentAccount
+        user: auth.currentAccount,
       }),
       {
         'Content-Type': 'application/json',
@@ -132,7 +129,6 @@ const MintRecord = ({ record }) => {
       })
       .then((trx) => {
         return sendRequest(
-          // eslint-disable-next-line no-undef
           `${process.env.REACT_APP_BACKEND_URL}/users/initMrr`,
           'POST',
           JSON.stringify({ trx }),
@@ -159,48 +155,17 @@ const MintRecord = ({ record }) => {
         <BuilderTokenAlert modalControl={handleOpenToken} owner={handleOwner} />
       )}
       {auth.chainId === 1 && !alertNoToken && <AlertConnectPolygon />}
-      <Container className={classes.root}>
-        <Grid container>
-          {record.modeArray.map((mode) => (
-            <Grid key={mode.modeName} className={classes.record} item xs={12}>
-              <Grid xs={12} md={6} item>
-                <SVG
-                  src={mode.svg}
-                  className={classes.img}
-                  alt='NFT Public Record'
-                  title={mode.modeName}
-                  uniquifyIDs={true}
-                />
-                <Box
-                  sx={{ mt: theme.spacing(1), mb: theme.spacing(18) }}
-                  textAlign='center'
-                >
-                  <Button
-                    onClick={onSubmitMintRecord(mode)}
-                    variant='contained'
-                    size='large'
-                    fullWidth
-                    disabled={
-                      (tokenOwner === false && auth.BTTokenCheck === false) ||
-                      auth.chainId === 1
-                    }
-                  >
-                    Mint Record
-                  </Button>
-                </Box>
-              </Grid>
-            </Grid>
-          ))}
-          <DialogEmailTrx
-            receipt={mrrReceipt}
-            open={openEmailModal}
-            onClose={handleClose}
-            record={record}
-            mintedObject={responseMintObject}
-            err={err}
-          />
-        </Grid>
-      </Container>
+      <ModeTrx
+        classes={classes}
+        record={record}
+        tokenOwner={tokenOwner}
+        onSubmitMintRecord={onSubmitMintRecord}
+        receipt={mrrReceipt}
+        open={openEmailModal}
+        mintedObject={responseMintObject}
+        err={err}
+        onClose={handleClose}
+      />
       <ModalBTBuyNested
         owner={handleOwner}
         open={openBTTokenModal}
