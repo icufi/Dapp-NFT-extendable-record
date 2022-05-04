@@ -89,8 +89,6 @@ const mrrQueue = async (req, res, next) => {
   const user = req.body.user.toLowerCase();
   const recordUser = record.user.toLowerCase();
 
-  console.log(ownerAddr, user, recordUser)
-
   // ownership check
   if (ownerAddr !== user || recordUser !== user) {
     const error = new HttpError(
@@ -404,7 +402,6 @@ const initMrr = async (req, res, next) => {
     });
     accountsPolygon = await web3Polygon.eth.getAccounts();
     networkIdPolygon = await web3Polygon.eth.net.getId();
-    console.log('networkIdPolygon:', networkIdPolygon)
     PubContract = new web3Polygon.eth.Contract(
       PublicRecordBuild.abi,
       PublicRecordBuild.networks[networkIdPolygon].address
@@ -444,8 +441,6 @@ const initMrr = async (req, res, next) => {
     const error = new HttpError('Network error. PubContract DNA failed.', 424);
     return next(error);
   }
-
-  console.log('pubcontractDNA:', pubContractDNA)
 
   // if PrToken dna does not exist, return
   if (!pubContractDNA || pubContractDNA === 0) {
@@ -628,8 +623,6 @@ const initMrr = async (req, res, next) => {
   // todo test variable
   const testTokenOwner = '0x83a9917294d46D411BaF4e3b213f506CaCaa0ce8';
   confirmedNFTTokenOwner = testTokenOwner.toLowerCase();
-
-  console.log(confirmedNFTTokenOwner, notConfirmedTrxCreator)
 
   // check NFT token owner equals trx token owner
   if (confirmedNFTTokenOwner !== notConfirmedTrxCreator) {
