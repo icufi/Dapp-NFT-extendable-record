@@ -1,18 +1,17 @@
 import React, { useState, useContext } from 'react';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid} from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import TextFieldFormik from './components/TextField';
 import SelectFieldFormik from './components/SelectField';
 import supportedNFTProjects from '../../../assets/supportedNFTProjects.json';
-import ButtonFormik from './components/ButtonFormik';
-
+import ButtonControlled from './components/ButtonControlled';
 
 import { AuthContext } from '../../../shared/context/auth-context';
 import ModalSugProject from '../formik/ModalSugFeature';
-
-
+import OpenModalText from '../../../shared/components/FormElements/OpenModalText';
+import ConnectWalletText from '../../../shared/components/UIElements/ConnectWalletText';
 
 const INITIAL_FORM_STATE = {
   // todo delete test input below
@@ -26,9 +25,7 @@ const INITIAL_FORM_STATE = {
 };
 
 const FORM_VALIDATION_SCHEMA = Yup.object().shape({
-  nftTokenType: Yup.string().required(
-    '(required).'
-  ),
+  nftTokenType: Yup.string().required('(required).'),
   nftTokenId: Yup.number()
     .required('A token Id number is required.')
     .integer()
@@ -47,7 +44,6 @@ const FORM_VALIDATION_SCHEMA = Yup.object().shape({
 });
 
 const SendFormik = (props) => {
-
   const auth = useContext(AuthContext);
   const [open, setOpen] = useState(false);
 
@@ -58,8 +54,6 @@ const SendFormik = (props) => {
   const handleClose = () => {
     setOpen(false);
   };
-
-
 
   return (
     <Container>
@@ -78,19 +72,13 @@ const SendFormik = (props) => {
               />
             </Grid>
             <Grid xs={12} item>
-              <Typography
+              <OpenModalText
+                children='suggest an NFT project'
+                color='blue'
                 align='right'
-                sx={{
-                  color: 'blue',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                }}
-                onClick={handleOpen}
-              >
-                suggest an NFT project
-              </Typography>
+                handleOpen={handleOpen}
+              />
             </Grid>
-            <ModalSugProject open={open} onClose={handleClose} />
             <Grid item xs={12}>
               <TextFieldFormik
                 name='nftTokenId'
@@ -111,25 +99,18 @@ const SendFormik = (props) => {
                 label='on-chain keyword (20 chars max, optional).'
               />
             </Grid>
-
             <Grid item xs={12}>
-              <ButtonFormik>Generate Image Preview</ButtonFormik>
+              <ButtonControlled children='Generate Image Preview' />
             </Grid>
             {!auth.provider.selectedAddress && (
-              <Grid xs={12} item>
-                <Typography
-                  align='center'
-                  sx={{
-                    color: 'blue',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                  }}
-                  onClick={auth.checkWalletIsConnected}
-                >
-                  connect wallet to preview
-                </Typography>
-              </Grid>
+              <ConnectWalletText
+                children='connect wallet to preview'
+                color='blue'
+                align='center'
+                checkWallet={auth.checkWalletIsConnected}
+              />
             )}
+            <ModalSugProject open={open} onClose={handleClose} />
           </Grid>
         </Form>
       </Formik>

@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 
 import TextFieldFormik from './formik/components/TextField'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
-import ButtonFormik from './formik/components/ButtonFormik'
+import ButtonControlled from './formik/components/ButtonControlled'
 import EmailPrompt from '../../shared/components/FormElements/EmailPrompt'
 
 const INITIAL_FORM_STATE = {
@@ -118,7 +118,7 @@ const EmailForm = ({record, response, isLoading, err, errorHTTP, emailSent, them
             {!response && !err && (
               <React.Fragment>
                 <Button onClick={props.onClose}>Close</Button>
-                <ButtonFormik
+                <ButtonControlled
                   err={err ? true : false}
                   email
                   onClick={() => props.onSubmitHandler()}
@@ -126,7 +126,7 @@ const EmailForm = ({record, response, isLoading, err, errorHTTP, emailSent, them
                   emailSent={emailSent ? true : false}
                 >
                   Send
-                </ButtonFormik>
+                </ButtonControlled>
               </React.Fragment>
             )}
             {response && <Button onClick={props.onClose}>Close</Button>}

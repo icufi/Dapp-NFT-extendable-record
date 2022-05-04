@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import Web3 from 'web3';
 
 import TextFieldFormik from '../../../components/form/formik/components/TextField';
-import ButtonFormik from '../../../components/form/formik/components/ButtonFormik';
+import ButtonControlled from '../../../components/form/formik/components/ButtonControlled';
 import { AuthContext } from '../../context/auth-context';
 import BuilderTokensBuild from '../../../assets/contracts/BuilderTokens.json';
 
@@ -174,7 +174,6 @@ export default function ModalEmailNested({ record, loading, receipt, owner, ...p
                     {record.nftTokenId}
                   </Typography>
                 </Grid>
-
                 <Grid item xs={12}>
                   <TextFieldFormik
                     name='emailfrom'
@@ -207,7 +206,7 @@ export default function ModalEmailNested({ record, loading, receipt, owner, ...p
                 </Grid>
 
                 <Grid item xs={12}>
-                  <ButtonFormik>Submit Mail</ButtonFormik>
+                  <ButtonControlled>Submit Mail</ButtonControlled>
                 </Grid>
               </Grid>
             </Form>
