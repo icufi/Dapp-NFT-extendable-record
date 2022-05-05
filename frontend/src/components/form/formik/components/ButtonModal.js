@@ -7,7 +7,6 @@ const ButtonFormik = ({ children, ...otherProps }) => {
 
   const handleSubmit = () => {
     submitForm();
-    otherProps.onClose();
   };
 
   const configButton = {
