@@ -940,7 +940,7 @@ const initRecord = async (req, res, next) => {
   const user = req.body.user.toLowerCase(); // unconfirmed user set to lower case
 
   // todo test variable delete below
-  confirmedNFTTokenOwner = '0x83a9917294d46D411BaF4e3b213f506CaCaa0ce8';
+  confirmedNFTTokenOwner = '0x3f87dA50151eEcf1a3af6D28a4ae7Fa69BaE16FF';
   confirmedNFTTokenOwner = confirmedNFTTokenOwner.toLowerCase();
 
   // check if confirmed NFTTokenOwner matches unconfirmed user, return error if addresses do not match
