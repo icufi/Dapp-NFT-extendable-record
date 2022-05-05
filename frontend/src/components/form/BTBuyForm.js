@@ -34,11 +34,13 @@ const BTBuyForm = ({chainId, onSubmitHandler}) => {
           <TextFieldFormik name='tokenCount' label='Cost 60 Matic per token' />
         </Grid>
 
-        <Grid xs={3} item>
+        <Grid xs={12} item>
           {/* todo switch disable check to id 137 main polygon */}
           <ButtonFormik
             disabled={chainId === 80001 ? false : true}
             sx={{ mt: theme.spacing(2) }}
+            fullWidth
+
           >
             Submit
           </ButtonFormik>
