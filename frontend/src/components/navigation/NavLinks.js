@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
 import { AuthContext } from '../../shared/context/auth-context';
-import ModalSugFeature from '../form/formik/ModalSugFeature';
+import ModalSugFeature from '../form/formik/modals/ModalSugFeature';
 import './NavLinks.css';
 
 const NavLinks = (props) => {

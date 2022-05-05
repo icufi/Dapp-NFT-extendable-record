@@ -7,7 +7,7 @@ import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
-import ModalBTBuyNested from '../components/form/formik/ModalBTBuyNested';
+import ModalBTBuyNested from '../components/form/formik/modals/ModalBTBuyNested';
 import AlertConnectPolygon from '../components/alerts/AlertConnectPolygon';
 import ErrorModal from '../shared/components/UIElements/ErrorModal';
 
