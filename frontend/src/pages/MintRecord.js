@@ -7,9 +7,10 @@ import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
-import ModalBTBuyNested from '../components/form/formik/modals/ModalBTBuyNested';
+import BTBuyForm from '../components/form/formik/modals/BTBuyForm';
 import AlertConnectPolygon from '../components/alerts/AlertConnectPolygon';
 import ErrorModal from '../shared/components/UIElements/ErrorModal';
+import ModalForms from '../components/form/formik/modals/ModalForms';
 
 import ModeTrx from '../shared/components/UIElements/ModeTrx';
 
@@ -46,8 +47,8 @@ const MintRecord = ({ record }) => {
 
   ScrollToTop();
 
-  const handleOwner = (bool) => {
-    setTokenOwner(bool);
+  const handleOwner = (owner) => {
+    setTokenOwner(owner);
   };
 
   const handleCloseToken = () => {
@@ -166,11 +167,12 @@ const MintRecord = ({ record }) => {
         err={err}
         onClose={handleClose}
       />
-      <ModalBTBuyNested
-        owner={handleOwner}
-        open={openBTTokenModal}
+      <ModalForms
         onClose={handleCloseToken}
-      />
+        open={openBTTokenModal}
+      >
+        <BTBuyForm owner={handleOwner} />
+      </ModalForms>
     </React.Fragment>
   );
 };
