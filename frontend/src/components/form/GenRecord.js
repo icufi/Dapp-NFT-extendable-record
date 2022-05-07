@@ -9,7 +9,7 @@ import supportedNFTProjects from '../../assets/supportedNFTProjects.json';
 import ButtonControlled from './formik/components/ButtonControlled';
 
 import { AuthContext } from '../../shared/context/auth-context';
-import ModalSugProject from './formik/modals/ModalSugFeature';
+import ModalSugProject from './formik/forms/ModalSugProject';
 import OpenModalText from '../../shared/components/FormElements/OpenModalText';
 import ConnectWalletText from '../../shared/components/UIElements/ConnectWalletText';
 

@@ -3,14 +3,11 @@ import { useContext, useState } from 'react';
 import {Grid, Box, Button} from '@mui/material';
 import Web3 from 'web3';
 
-import { AuthContext } from '../../../../shared/context/auth-context';
-import BuilderTokensBuild from '../../../../assets/contracts/BuilderTokens.json';
-import LoadingSpinner from '../../../../shared/components/UIElements/LoadingSpinner';
-import BTBuyFormik from '../../BTBuyFormik';
-
-import theme from '../../../../Styles';
-import BTBuyResponse from './BTBuyResponse';
-import SwitchNetwork from '../components/SwitchNetwork';
+import { AuthContext } from '../../shared/context/auth-context';
+import BuilderTokensBuild from '../../assets/contracts/BuilderTokens.json';
+import BTBuyFormik from './formik/forms/BTBuyFormik';
+import BTBuyResponse from './formik/components/BTBuyResponse';
+import SwitchNetwork from './formik/components/SwitchNetwork';
 
 const style = {
   position: 'absolute',
@@ -74,9 +71,7 @@ export default function BTBuyForm({ owner, ...props }) {
           onSubmitHandler={onSubmitHandler}
           chainId={auth.chainId}
         />
-
         <BTBuyResponse trxSuccess={trxSuccess} error={error} />
-
         <SwitchNetwork />
         {/* todo test variable network 80001 */}
         {auth.chainId !== 80001 && (

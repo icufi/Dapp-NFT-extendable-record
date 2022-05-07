@@ -1,13 +1,13 @@
 import React from 'react';
-import { Grid, Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import TextFieldFormik from './formik/components/TextField';
-import ButtonFormik from './formik/components/ButtonModal';
-import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import TextFieldFormik from '../components/TextField';
+import ButtonFormik from '../components/ButtonModal';
+import LoadingSpinner from '../../../../shared/components/UIElements/LoadingSpinner';
 
-import theme from '../../Styles';
+import theme from '../../../../Styles';
 
 const INITIAL_FORM_STATE = {
   tokenCount: '',

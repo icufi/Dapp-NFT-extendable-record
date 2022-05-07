@@ -7,10 +7,10 @@ import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
 import { useHttpClient } from '../shared/hooks/http-hook';
 import BuilderTokenAlert from '../components/alerts/AlertBuilderToken';
 import ScrollToTop from '../shared/components/util/ScrollToTop';
-import BTBuyForm from '../components/form/formik/modals/BTBuyForm';
+import BTBuyForm from '../components/form/BTBuyForm';
 import AlertConnectPolygon from '../components/alerts/AlertConnectPolygon';
 import ErrorModal from '../shared/components/UIElements/ErrorModal';
-import ModalForms from '../components/form/formik/modals/ModalForms';
+import ModalForms from '../components/form/formik/components/ModalForms';
 
 import ModeTrx from '../shared/components/UIElements/ModeTrx';
 

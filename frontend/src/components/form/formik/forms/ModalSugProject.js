@@ -5,9 +5,9 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import { Formik, Form } from 'formik';
 
-import TextFieldFormik from '../../../components/form/formik/components/TextField';
-import ButtonModal from '../../../components/form/formik/components/ButtonModal';
-import { useHttpClient } from '../../../shared/hooks/http-hook';
+import TextFieldFormik from '../components/TextField';
+import ButtonModal from '../components/ButtonModal';
+import { useHttpClient } from '../../../../shared/hooks/http-hook';
 import * as Yup from 'yup';
 
 import theme from '../../../../Styles';
@@ -32,7 +32,8 @@ const INITIAL_FORM_STATE = {
 const FORM_VALIDATION_SCHEMA = Yup.object().shape({
   nftProject: Yup.string()
     .required()
-    .max(60, 'Please keep suggestion to less than 60 characters.').min(3),
+    .max(60, 'Please keep suggestion to less than 60 characters.')
+    .min(3),
 });
 
 export default function TransitionsModal(props) {
@@ -78,7 +79,10 @@ export default function TransitionsModal(props) {
               onSubmit={onSubmitHandler}
             >
               <Form>
-                <TextFieldFormik name='nftProject' label='Suggest an NFT project' />
+                <TextFieldFormik
+                  name='nftProject'
+                  label='Suggest an NFT project'
+                />
                 <ButtonModal
                   onClose={props.onClose}
                   sx={{ mt: theme.spacing(2) }}
