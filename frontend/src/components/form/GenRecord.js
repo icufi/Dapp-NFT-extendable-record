@@ -12,6 +12,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import ModalSugProject from './formik/forms/ModalSugProject';
 import OpenModalText from '../../shared/components/FormElements/OpenModalText';
 import ConnectWalletText from '../../shared/components/UIElements/ConnectWalletText';
+import ModalForms from './formik/components/ModalForms';
 
 const INITIAL_FORM_STATE = {
   // todo delete test input below
@@ -110,7 +111,9 @@ const SendFormik = (props) => {
                 checkWallet={auth.checkWalletIsConnected}
               />
             )}
-            <ModalSugProject open={open} onClose={handleClose} />
+            <ModalForms open={open} onClose={handleClose}>
+              <ModalSugProject />
+            </ModalForms>
           </Grid>
         </Form>
       </Formik>
