@@ -24,8 +24,10 @@ router.post('/initMrr', usersController.initMrr);
 router.post(
   '/suggestion',
   [
-    check('nftProject').not().isEmpty().isLength({ max: 60 }),
-    check('featureSuggestion').not().isEmpty().isLength({ max: 200 }),
+    check('nftProject').optional({ checkFalsy: true }).isLength({ max: 60 }),
+    check('featureSuggestion')
+      .optional({ checkFalsy: true })
+      .isLength({ max: 200 }),
     check('email').optional({ checkFalsy: true }).normalizeEmail().isEmail(),
   ],
   usersController.suggestion
