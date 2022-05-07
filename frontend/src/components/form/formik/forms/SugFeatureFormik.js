@@ -1,8 +1,5 @@
 import * as React from 'react';
-import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -61,18 +58,6 @@ export default function TransitionsModal(props) {
   };
 
   return (
-    <div>
-      <Modal
-        aria-labelledby='transition-modal-title'
-        aria-describedby='transition-modal-description'
-        {...props}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={props.open}>
           <Box sx={style}>
             <Formik
               initialValues={{ ...INITIAL_FORM_STATE }}
@@ -104,8 +89,5 @@ export default function TransitionsModal(props) {
               </Form>
             </Formik>
           </Box>
-        </Fade>
-      </Modal>
-    </div>
   );
 }

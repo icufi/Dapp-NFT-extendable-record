@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
 import { AuthContext } from '../../shared/context/auth-context';
-import ModalSugFeature from '../form/formik/modals/ModalSugFeature';
+import ModalSugFeature from '../form/formik/forms/SugFeatureFormik';
+import ModalForms from '../form/formik/components/ModalForms'
 import './NavLinks.css';
 
 const NavLinks = (props) => {
@@ -50,7 +51,9 @@ const NavLinks = (props) => {
           </Button>
         </li>
       )}
-      <ModalSugFeature open={open} onClose={handleClose} />
+      <ModalForms open={open} onClose={handleClose}>
+        <ModalSugFeature />
+      </ModalForms>
     </ul>
   );
 };
