@@ -168,10 +168,9 @@ const MintRecord = ({ record }) => {
         onClose={handleClose}
       />
       <ModalForms
-        onClose={handleCloseToken}
         open={openBTTokenModal}
       >
-        <BTBuyForm owner={handleOwner} />
+        <BTBuyForm owner={handleOwner} onClose={handleCloseToken} />
       </ModalForms>
     </React.Fragment>
   );
