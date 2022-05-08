@@ -10,7 +10,7 @@ import { AuthContext } from '../../context/auth-context';
 import ScrollToTop from '../util/ScrollToTop';
 import { useHttpClient } from '../../hooks/http-hook';
 import EmailForm from '../../../components/form/EmailForm';
-import EmailDialog from '../FormElements/EmailDialog';
+import EmailDialog from '../../../components/form/FormElements/EmailDialog';
 
 import theme from '../../../Styles';
 

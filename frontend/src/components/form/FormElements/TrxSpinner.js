@@ -1,7 +1,7 @@
 import React from 'react'
 import {Box, Typography} from '@mui/material'
 
-import LoadingSpinner from '../UIElements/LoadingSpinner'
+import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner'
 
 function TrxSpinner({theme}) {
   return (

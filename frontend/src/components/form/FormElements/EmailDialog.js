@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import PendingComplete from '../UIElements/PendingComplete';
+import PendingComplete from '../../../shared/components/UIElements/PendingComplete';
 import TimeoutDialog from './TimeoutDialog';
 import Success from './Success';
 import TrxError from './TrxError';

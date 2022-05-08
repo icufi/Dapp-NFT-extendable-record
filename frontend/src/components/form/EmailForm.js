@@ -7,7 +7,7 @@ import * as Yup from 'yup'
 import TextFieldFormik from './formik/components/TextField'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import ButtonControlled from './formik/components/ButtonControlled'
-import EmailPrompt from '../../shared/components/FormElements/EmailPrompt'
+import EmailPrompt from '../../components/form/FormElements/EmailPrompt'
 
 const INITIAL_FORM_STATE = {
   emailFrom: '',

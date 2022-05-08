@@ -3,14 +3,14 @@ import { Typography, Grid, Container, Box } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 
-import GenRecord from './form/GenRecord';
-import { useHttpClient } from '../shared/hooks/http-hook';
-import MintRecord from '../pages/MintRecord';
-import LoadingSpinner from '../shared/components/UIElements/LoadingSpinner';
-import ErrorModal from '../shared/components/UIElements/ErrorModal';
-import { AuthContext } from '../shared/context/auth-context';
+import GenRecord from '../../components/form/GenRecord';
+import { useHttpClient } from '../hooks/http-hook';
+import MintRecord from '../../pages/MintRecord';
+import LoadingSpinner from './UIElements/LoadingSpinner';
+import ErrorModal from './UIElements/ErrorModal';
+import { AuthContext } from '../context/auth-context';
 
-import theme from '../Styles';
+import theme from '../../Styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
