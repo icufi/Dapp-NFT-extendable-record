@@ -58,6 +58,8 @@ export const useAuth = () => {
         BuilderTokens.abi,
         BuilderTokens.networks[networkId].address
       );
+
+      if (BTContract && userAddress) {
       try {
         const BTTokensOwned = tokenCheck(BTContract, userAddress);
          console.log('tokensOwned:', BTTokensOwned);
@@ -66,7 +68,7 @@ export const useAuth = () => {
         }
       } catch (err) {
         throw new Error('Failed to connect to ethereum at Auth context.');
-      }
+      }}
     };
     btToken();
 
