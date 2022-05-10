@@ -11,6 +11,8 @@ export const useAuth = () => {
   const [currentAccount, setCurrentAccount] = useState('');
   const [chainId, setChainId] = useState('');
 
+  const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
+
   const detect = useCallback(async () => {
     const provider = await detectProvider();
     const web3 = new Web3(provider);
@@ -24,6 +26,17 @@ export const useAuth = () => {
     }
   }, []);
 
+  const tokenCheck = async (contract, userAddr) => {
+    try {
+      return await contract.methods.balanceOf(userAddr).call();
+    } catch (err) {
+      throw new Error(
+        'Network error. Unable to retrieve Builder Token balance of user.',
+        424
+      );
+    }
+  };
+
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('chainChanged', () => {
@@ -36,116 +49,28 @@ export const useAuth = () => {
   }, [detect]);
 
   useEffect(() => {
-    if (currentAccount) {
-      if (chainId === 1) {
-        const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-        const alchemy = async () => {
-          if (chainId === 1) {
-            let userAddress;
-            let BTContract;
-            try {
-            const web3 = createAlchemyWeb3(alchemyKey);
-            const accounts = await web3.eth.getAccounts();
-             userAddress = accounts[0];
-            const networkId = await web3.eth.net.getId();
-            BTContract = new web3.eth.Contract(
-              BuilderTokens.abi,
-              BuilderTokens.networks[networkId].address
-            );
-            } catch (err) {
-              throw new Error(
-                'Failed to connect to ethereum at Auth context.'
-              )
-            }
-            let BTTokensOwned;
-            try {
-              BTTokensOwned = await BTContract.methods
-                .balanceOf(userAddress)
-                .call();
-            } catch (err) {
-              throw new Error(
-                'Network error. Unable to retrieve Builder Token balance of user.',
-                424
-              );
-            }
-
-            if (BTTokensOwned && BTTokensOwned >= 1) {
-              setBTTokenCheck(true);
-            }
-          }
-        };
-        alchemy();
+    const btToken = async () => {
+      const web3 = createAlchemyWeb3(alchemyKey);
+      const accounts = await web3.eth.getAccounts();
+      const networkId = await web3.eth.net.getId();
+      const userAddress = accounts[0];
+      const BTContract = new web3.eth.Contract(
+        BuilderTokens.abi,
+        BuilderTokens.networks[networkId].address
+      );
+      try {
+        const BTTokensOwned = tokenCheck(BTContract, userAddress);
+         console.log('tokensOwned:', BTTokensOwned);
+        if (BTTokensOwned && BTTokensOwned >= 1) {
+          setBTTokenCheck(true);
+        }
+      } catch (err) {
+        throw new Error('Failed to connect to ethereum at Auth context.');
       }
-    }
-  }, [chainId, currentAccount, provider]);
+    };
+    btToken();
 
-  useEffect(() => {
-    if (currentAccount) {
-      // todo switch to 137
-      if (chainId === 80001) {
-        const initBTTokenCheckPolygon = async () => {
-          const provider = await detectProvider();
-          const web3 = new Web3(provider);
-          const userAddress = provider.selectedAddress;
-          const networkId = await web3.eth.net.getId();
-          const BTContract = new web3.eth.Contract(
-            BuilderTokens.abi,
-            BuilderTokens.networks[networkId].address
-          );
-          let BTTokensOwned;
-          try {
-            BTTokensOwned = await BTContract.methods
-              .balanceOf(userAddress)
-              .call();
-          } catch (err) {
-            throw new Error(
-              'Network error. Unable to retrieve Builder Token balance of user.',
-              424
-            );
-          }
-
-          if (BTTokensOwned && BTTokensOwned >= 1) {
-            setBTTokenCheck(true);
-          }
-        };
-        initBTTokenCheckPolygon();
-      }
-    }
-  }, [chainId, currentAccount, provider]);
-
-  useEffect(() => {
-    if (currentAccount) {
-      if (chainId === 80001) {
-        const initBTTokenCheckMumbai = async () => {
-          const provider = await detectProvider();
-          const web3 = new Web3(provider);
-          const accounts = await web3.eth.getAccounts();
-          const userAddress = accounts[0];
-          const networkId = await web3.eth.net.getId();
-          const BTContract = new web3.eth.Contract(
-            BuilderTokens.abi,
-            BuilderTokens.networks[networkId].address
-          );
-          let BTTokensOwned;
-          try {
-            BTTokensOwned = await BTContract.methods
-              .balanceOf(userAddress)
-              .call();
-          } catch (err) {
-            throw new Error(
-              'Network error. Unable to retrieve Builder Token balance of user.',
-              424
-            );
-          }
-
-          if (BTTokensOwned && BTTokensOwned >= 1) {
-            setBTTokenCheck(true);
-          }
-        };
-        initBTTokenCheckMumbai();
-      }
-    }
-  }, [chainId, currentAccount, provider]);
+  }, [alchemyKey]);
 
   const checkWalletIsConnected = useCallback(async () => {
     const { ethereum } = window;
