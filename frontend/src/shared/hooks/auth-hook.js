@@ -93,7 +93,7 @@ export const useAuth = () => {
       console.log('Found an account! Address: ', accounts[0]);
       setCurrentAccount(accounts[0]);
     } catch (error) {
-      console.log('Error: ', error);
+      console.log('Error at Auth-hook: ', error);
     }
   }, []);
 
