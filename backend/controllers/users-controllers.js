@@ -142,12 +142,6 @@ const mrrQueue = async (req, res, next) => {
       ></image>`;
 
     // msg word chunks
-    // textOne = record.textOne;
-    // textTwo = record.textTwo;
-    // textThree = record.textThree;
-    // textFour = record.textFour;
-
-    // msg word chunks
     const { textOne, textTwo, textThree, textFour } = record;
 
     console.log('textOne:', textOne);
