@@ -21,9 +21,6 @@ exports.emailInterval = async () => {
       throw new Error('Could not get pending emails from db.', err);
     }
 
-    console.log('email array:', emails);
-    console.log('number of pending emails:', emails.length);
-
     // if no pending true emails, return
     if (!emails || emails.length === 0) {
       console.log('No pending emails in db.');

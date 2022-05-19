@@ -72,29 +72,6 @@ exports.mintInterval = async () => {
       return;
     }
 
-    // sleep x number of seconds to slow down minting loop
-    // if pending time stamp is greater than 24 hours, update dbrecord to pending status false and mrrTimeout true.
-    // call pubContract to find prTokenId from dbRecord dna
-    // if prTokenId does not exist at pubContract, continue;
-    // if prTokenId exists at contract, check to see if corresponding tokenID at dbrecord.
-    // if tokenIds do not match, update db record to pending false, mint error true, continue;
-    // if prTokenId exists, check for corresponding mrrTokenId at mrr contract by dbRecord dna.
-    // if mrrTokenID exists and equals prTokenId for given DNA, update pending to false, mint complete true, prTokenId, mrrTokenId, continue;
-    // if prTokenId and no mrrTokenId does not exist, then get attrCreatorAddr from pubContract for given prTokenID
-    // get current nftToken owner from supported package contract, set to nftOwnerAddress
-    // if no supported tokens owned or address from supported package returns 0, continue;
-    // if pubTokenCreator does not equal nftOwnerAddr or db record creator, set pending status to false and set mint error status
-    // if attrCreatorAddr equals currnet NFT token owner and bayc token owner at the time that record data was generated. start mrr mint...
-    // mrrMint function takes in prTokenId dbRecord data, confirmedPubTokenCreator, and dna from dbRecord
-    // if trx success, call for mrrtokenId bc not returned on transaction receipt
-    // if network fails to populate, continue. will be picked up on future itteration and removed from interval loop
-    // if mrrTokenId exists, update database with mrrTrxHash, prTokenId, mrrTokenIdFinal, pending false, mintingComplete true, mintwhere,
-
-    // check attrCreatorAddr is equal to nftOwnerAddress
-    // check attrCreatorAddr is equal to dbrecord creatorAddress. (this may not be true if there is a delay in minting from creation.)
-    // if these checks fail, update dbrecord pending to false.
-    // if creator/owner address checks pass, mint mrrTokenId with the same token id number as prTokenId.
-    // save mrrMint trx hash to db. save tokenids to db. set pending to false. set mint complete to true.
 
     const timeNow = Date.now();
 
@@ -106,7 +83,7 @@ exports.mintInterval = async () => {
         continue;
       }
 
-      // if prToken has not been minted and and more than 24 hours has passed record timeout true, pending false
+      // if prToken has not been minted and more than 24 hours has passed record timeout true, pending false
       // this is expected to occur when mint is not completed by client side
       if (timeNow - record.pendingTime > 7200000) {
         try {
@@ -217,7 +194,6 @@ exports.mintInterval = async () => {
         // set address to lower case for comparisons
         confirmedPubTokenCreator = confirmedPubTokenCreator.toLowerCase();
 
-        // if checks for supported token types filter
         // check NFT owner status per record.nftTokenType
         let confirmedNFTTokenOwner;
 

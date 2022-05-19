@@ -1230,8 +1230,6 @@ const initRecord = async (req, res, next) => {
       const error = new HttpError('Could not create image mode.', 503);
       return next(error);
     }
-    // change
-    console.log('TESTMaster[0] name:', TESTMaster[0].name);
   }
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1338,8 +1336,6 @@ const suggestion = async (req, res, next) => {
 const sendMail = async (req, res, next) => {
   // user routes express-validator
   const errors = validationResult(req);
-
-  console.log(req.body);
 
   // if validation errors, next
   if (!errors.isEmpty()) {
