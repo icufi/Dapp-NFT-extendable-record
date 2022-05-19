@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 
-const CheckboxGrid = ({name, label, legend, ...otherProps}) => {
+const CheckboxGrid = ({name, label, legend}) => {
     const {setFieldValue} = useFormikContext();
     const [field, meta] = useField(name);
 
