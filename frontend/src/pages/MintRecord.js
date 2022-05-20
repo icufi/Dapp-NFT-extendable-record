@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Web3 from 'web3';
-import { makeStyles } from '@mui/styles';
 
 import { AuthContext } from '../shared/context/auth-context';
 import VisibleModesBuild from '../assets/contracts/VisibleModes.json';
@@ -11,27 +10,8 @@ import BTBuyForm from '../components/form/BTBuyForm';
 import AlertConnectPolygon from '../components/alerts/AlertConnectPolygon';
 import ErrorModal from '../shared/components/UIElements/ErrorModal';
 import ModalForms from '../components/form/formik/components/ModalForms';
-
 import ModeTrx from '../shared/components/UIElements/ModeTrx';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(8),
-  },
-  record: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-  },
-  img: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 6,
-    boxShadow: '0 0 5px #999999',
-  },
-}));
 
 const MintRecord = ({ record }) => {
   const auth = useContext(AuthContext);
@@ -42,8 +22,6 @@ const MintRecord = ({ record }) => {
   const [alertNoToken, setAlertNoToken] = useState(false);
   const [openBTTokenModal, setOpenBTTokenModal] = useState(false);
   const [responseMintObject, setResponseMintObject] = useState('');
-
-  const classes = useStyles();
 
   ScrollToTop();
 
@@ -157,7 +135,6 @@ const MintRecord = ({ record }) => {
       )}
       {auth.chainId === 1 && !alertNoToken && <AlertConnectPolygon />}
       <ModeTrx
-        classes={classes}
         record={record}
         tokenOwner={tokenOwner}
         onSubmitMintRecord={onSubmitMintRecord}

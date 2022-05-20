@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { Typography, Grid, Container, Box } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 
 import GenRecord from '../../components/form/GenRecord';
@@ -12,11 +11,7 @@ import { AuthContext } from '../context/auth-context';
 
 import theme from '../../Styles';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    paddingTop: { md: theme.spacing(12), xs: theme.spacing(50) },
-    paddingBottom: theme.spacing(8),
-  },
+const styles = {
   loading: {
     display: 'flex',
     justifyContent: 'center',
@@ -27,18 +22,11 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: theme.spacing(4),
     paddingTop: theme.spacing(8),
   },
-  error: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '80vh',
-  },
-}));
+};
 
 const ValueProp = (props) => {
   const auth = useContext(AuthContext);
   const [response, setResponse] = useState({});
-  const classes = useStyles(props);
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
@@ -72,7 +60,7 @@ const ValueProp = (props) => {
     return (
       <Grid container>
         <Grid item xs={12}>
-          <Box className={classes.loading}>
+          <Box sx={styles.loading}>
             <LoadingSpinner />
           </Box>
         </Grid>
@@ -140,7 +128,7 @@ const ValueProp = (props) => {
         </Grid>
 
         <Grid
-          className={classes.body}
+          sx={styles.body}
           xs={12}
           md={6}
           order={{ xs: 1, sm: 1, md: 2 }}

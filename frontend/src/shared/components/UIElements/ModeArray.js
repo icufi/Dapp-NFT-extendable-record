@@ -1,44 +1,44 @@
 import React, { useContext } from 'react';
 import { Grid, Box, Button } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import SVG from 'react-inlinesvg';
 
 import { AuthContext } from '../../../shared/context/auth-context.js';
 
 import theme from '../../../Styles';
 
-const useStyles = makeStyles((theme) => ({
+const styles = {
   record: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
   },
-  imp: {
+  img: {
     width: '100%',
     height: '100%',
     borderRadius: 6,
     boxShadow: '0 0 5px #999999',
   },
-}));
+};
 
-const ModeArray = ({ record, tokenOwner, ...props }) => {
+const ModeArray = ({record, tokenOwner, ...props }) => {
   const auth = useContext(AuthContext);
 
-  const classes = useStyles();
+  // const classes = useStyles();
 
   return (
     <>
       {record.modeArray.map((mode) => (
-        <Grid key={mode.modeName} className={classes.record} item xs={12}>
+        <Grid key={mode.modeName} sx={styles.record} item xs={12}>
           <Grid xs={12} md={6} item>
-            <SVG
-              src={mode.svg}
-              className={classes.img}
-              alt='NFT Public Record'
-              title={mode.modeName}
-              uniquifyIDs={true}
-            />
+            <Box sx={styles.img}>
+              <SVG
+                src={mode.svg}
+                alt='NFT Public Record'
+                title={mode.modeName}
+                uniquifyIDs={true}
+              />
+            </Box>
             <Box
               sx={{ mt: theme.spacing(1), mb: theme.spacing(18) }}
               textAlign='center'

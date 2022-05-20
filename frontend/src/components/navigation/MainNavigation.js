@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
-
+import { Box } from '@mui/material';
 
 import MainHeader from './MainHeader';
 import NavLinks from './NavLinks';
@@ -12,19 +11,17 @@ import { AuthContext } from '../../shared/context/auth-context';
 import logo3 from '../../assets/images/logo3.svg';
 import './MainNavigation.css';
 
-
-const useStyles = makeStyles((theme) => ({
-  img: {
+const styles = {
+  logo: {
     width: '100%',
     height: '100%',
     borderRadius: 6,
   },
-}));
+};
 
-const MainNavigation = (props) => {
+const MainNavigation = () => {
   const auth = useContext(AuthContext);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
-  const classes = useStyles();
 
   const openDrawerHandler = () => {
     setDrawerIsOpen(true);
@@ -56,11 +53,11 @@ const MainNavigation = (props) => {
         )}
         <h1 className='main-navigation__title'>
           <Link to='/'>
-            <img
-              className={classes.img}
+            <Box
+              sx={styles.logo}
+              component='img'
               src={logo3}
-              alt='Public Record Title'
-              
+              alt='Visible Logo Title'
             />
           </Link>
         </h1>
