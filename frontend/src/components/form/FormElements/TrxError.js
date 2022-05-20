@@ -1,15 +1,21 @@
 import React from 'react'
 import {Box} from '@mui/material'
 
+import theme from '../../../Styles';
+
+const styles = {
+  root: {
+    mr: theme.spacing(3),
+    ml: theme.spacing(3),
+    mt: theme.spacing(1),
+    color: 'red',
+  },
+};
+
 function TrxError(props) {
   return (
     <Box
-      sx={{
-        mr: props.theme.spacing(3),
-        ml: props.theme.spacing(3),
-        mt: props.theme.spacing(1),
-        color: 'red',
-      }}
+      sx={styles.root}
     >
       Error: {props.err.message}
     </Box>

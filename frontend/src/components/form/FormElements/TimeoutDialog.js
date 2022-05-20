@@ -1,15 +1,19 @@
-import React from 'react'
-import {Box} from '@mui/material'
+import React from 'react';
+import { Box } from '@mui/material';
 
-function TimeoutDialog(props) {
+import theme from '../../../Styles';
+
+const styles = {
+  root: {
+    ml: theme.spacing(3),
+    mt: theme.spacing(1),
+    color: 'green',
+  },
+};
+
+function TimeoutDialog() {
   return (
-    <Box
-      sx={{
-        ml: props.theme.spacing(3),
-        mt: props.theme.spacing(1),
-        color: 'green',
-      }}
-    >
+    <Box sx={styles.root}>
       Timeout. This may be do to a network issue. If you have successfully
       minted a record, our system will automatically publish it. No further
       action required.
@@ -17,4 +21,4 @@ function TimeoutDialog(props) {
   );
 }
 
-export default TimeoutDialog
+export default TimeoutDialog;

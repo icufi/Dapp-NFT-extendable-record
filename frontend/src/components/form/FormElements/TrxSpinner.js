@@ -1,17 +1,20 @@
-import React from 'react'
-import {Box, Typography} from '@mui/material'
+import React from 'react';
+import { Box, Typography } from '@mui/material';
 
-import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner'
+import LoadingSpinner from '../../../shared/components/UIElements/LoadingSpinner';
 
-function TrxSpinner({theme}) {
+import theme from '../../../Styles';
+
+const styles = {
+  root: { mt: theme.spacing(2), pb: theme.spacing(2) },
+  dialog: { mt: theme.spacing(3), padding: theme.spacing(2) },
+};
+
+function TrxSpinner({ theme }) {
   return (
-    <Box
-      sx={{ mt: theme.spacing(2), pb: theme.spacing(2) }}
-      xs={12}
-      textAlign='center'
-    >
+    <Box sx={styles.root} xs={12} textAlign='center'>
       <LoadingSpinner />
-      <Typography sx={{ mt: theme.spacing(3), padding: theme.spacing(2) }}>
+      <Typography sx={styles.dialog}>
         Keep this dialog box open until you receive a transaction 'success' or
         'error' message.
       </Typography>
@@ -19,4 +22,4 @@ function TrxSpinner({theme}) {
   );
 }
 
-export default TrxSpinner
+export default TrxSpinner;
