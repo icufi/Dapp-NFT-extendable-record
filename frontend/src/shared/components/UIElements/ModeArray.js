@@ -17,7 +17,6 @@ const styles = {
     width: '100%',
     height: '100%',
     borderRadius: 6,
-    boxShadow: '0 0 5px #999999',
   },
 };
 
