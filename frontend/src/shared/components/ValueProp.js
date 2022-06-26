@@ -20,8 +20,8 @@ const styles = {
     minHeight: '80vh',
   },
   body: {
-    paddingRight: theme.spacing(4),
-    paddingTop: theme.spacing(8),
+    pr: theme.spacing(4),
+    pt: theme.spacing(8),
   },
   root: {
     pt: { md: theme.spacing(12), xs: theme.spacing(8) },
